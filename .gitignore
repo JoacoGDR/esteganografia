@@ -40,5 +40,5 @@ local.properties
 .loadpath
 .idea/*
 .DS_Store
-
+.vscode/*
 target/
