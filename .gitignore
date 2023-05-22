@@ -39,3 +39,6 @@ local.properties
 .settings/
 .loadpath
 .idea/*
+.DS_Store
+
+target/
