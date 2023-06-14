@@ -8,8 +8,8 @@
 typedef struct {
   unsigned short bfType; //the characters "BM"
   unsigned int bfSize; //the size of the file in bytes
-  unsigned short bfReserved1; //unused - must be zero
-  unsigned short bfReserved2; //unused - must be zero
+  unsigned short bfReserved1; // Shadow number
+  unsigned short bfReserved2; //unused 
   unsigned int bfOffBits; //the offset of the pixel data inside the BMP file
 } BITMAPFILEHEADER;
 
@@ -35,6 +35,11 @@ struct BMPImage {
   int bitsPerPixel;
   unsigned char *data;
 } typedef BMPImage;
+
+//TODO
+//BMPImage *writeBMP(const recibe la tira de pixeles) {
+  //escribir el header y después la tira de píxeles que recibe
+//}
 
 BMPImage *readBMP(const char* filename) {
   // Open the file.
@@ -74,28 +79,30 @@ BMPImage *readBMP(const char* filename) {
 
 
 
-int main() {
-  const char* filename = "blackbuck.bmp";  // Replace with your BMP file path
+// int main() {
+//   const char* filename = "blackbuck.bmp";  // Replace with your BMP file path
   
-  // Read the BMP image
-  BMPImage* image = readBMP(filename);
-  if (image == NULL) {
-    printf("Failed to read the BMP image.\n");
-    return 1;
-  }
+//   // Read the BMP image
+//   BMPImage* image = readBMP(filename);
+//   if (image == NULL) {
+//     printf("Failed to read the BMP image.\n");
+//     return 1;
+//   }
   
-  // Print the image properties
-  printf("Image Properties:\n");
-  printf("Width: %d pixels\n", image->width);
-  printf("Height: %d pixels\n", image->height);
-  printf("Bits Per Pixel: %d\n", image->bitsPerPixel);
+//   // Print the image properties
+//   printf("Image Properties:\n");
+//   printf("Width: %d pixels\n", image->width);
+//   printf("Height: %d pixels\n", image->height);
+//   printf("Bits Per Pixel: %d\n", image->bitsPerPixel);
+
+//   printf("%s", image->data);
   
-  // Cleanup
-  free(image->data);
-  free(image);
+//   // Cleanup
+//   free(image->data);
+//   free(image);
   
-  return 0;
-}
+//   return 0;
+// }
 
 
 
