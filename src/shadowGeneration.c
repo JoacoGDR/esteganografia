@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 
 struct ImageBlock {
     int blockNumber;
@@ -11,16 +12,18 @@ struct ImageBlock {
     size_t * g;
 } typedef ImageBlock;
 
+struct V {
+    size_t m; //f evaluado
+    size_t d; //g evaluado
+} typedef V;
+
+
 struct Shadow {
     size_t shadowNumber;
     int t;
     V * shadow; // v0,sn || v1,sn || v2,sn ...
 } typedef Shadow;
 
-struct V {
-    size_t m; //f evaluado
-    size_t d; //g evaluado
-} typedef V;
 
 //"123141562"
 unsigned char ** divideBytes(unsigned char* data, int datalength,  int blockSize){
@@ -51,12 +54,13 @@ Shadow * generateShadows(ImageBlock * blocks,int t, int n){
     for(int i =0; i<n; i++){
         shadows[i].shadow = malloc(t * sizeof(V));
         shadows[i].shadowNumber = i;
+        shadows[i].t=t;
         for (size_t j = 0; j < t; j++){
             shadows[i].shadow[j].m = evaluate(blocks[j].f, i);
             shadows[i].shadow[j].d = evaluate(blocks[j].g, i);
         }
-        return shadows;
     }
+    return shadows;
 }
 
 //a:[012..k-1]   b:[k...2k-2-1]
@@ -77,8 +81,8 @@ ImageBlock * decomposeImage(BMPImage * image, int k){
     for (int i = 0; i < t; i++)
     {
         imageBlocks[i].blockNumber = i;
-        imageBlocks[i].f = malloc(k * sizeof(int));
-        imageBlocks[i].g = malloc(k * sizeof(int));
+        imageBlocks[i].f = malloc(k * sizeof(size_t));
+        imageBlocks[i].g = malloc(k * sizeof(size_t));
 
         for (int j = 0; j < blockSize; j++)
         {
@@ -112,7 +116,7 @@ Shadow * generateShadowsFromFile(char * filename, int k, int n){
     BMPImage* image = readBMP(filename);
     if (image == NULL) {
         printf("Failed to read the BMP image.\n");
-        return 1;
+        return NULL;
     }
 
     int imageSize = image->bitsPerPixel * image->width * image->height;
@@ -122,6 +126,15 @@ Shadow * generateShadowsFromFile(char * filename, int k, int n){
     ImageBlock * imageBlocks = decomposeImage(image, k);
     return generateShadows(imageBlocks, t, n);
 }
+
+// TODO: Hacer generico =>  StepBits LSB
+// void stepBitsLSB(unsigned char * byte, unsigned char X, int lsbn){
+    
+// }
+
+//TODO: Hacer generico => Extract LSB
+//void extract (unsigned char * byte, size_t * X, int lsbn)
+
 
 void stepBitsLSB2(unsigned char * byte, unsigned char X){
     unsigned char maskA = 0x03; // 00000011
@@ -163,8 +176,17 @@ void stepBitsLSB4(unsigned char * byte, unsigned char X) {
     *B = (*B & ~mask) | lastBits;
 }
 
+void printShadow(Shadow shadow) {
+    printf("SHADOW\n");
+    for(int i=0; i<shadow.t; i++){
+        printf("%d - %d -", shadow.shadow->m, shadow.shadow->d);
+    }
+    printf("\n");
+}
 
-unsigned char * lsbHide(BMPImage * img, Shadow shadow, int k){
+
+
+unsigned char * hideShadowInImage(BMPImage * img, Shadow shadow, int k){
     unsigned char * image = img->data;
     img->fileHeader.bfReserved1 = shadow.shadowNumber;
     V * vs = shadow.shadow;
@@ -184,38 +206,115 @@ unsigned char * lsbHide(BMPImage * img, Shadow shadow, int k){
             image = image+4;
         }
     }
+    return img->data;
+}
+
+size_t extractLSB4(unsigned char * img){
+    unsigned char mask = 0x0F;  // Mask to extract the 4 least significant bits
+    unsigned char * A = img;
+    unsigned char * B = img + 1;
+    unsigned char firstBits = *A & mask; 
+    unsigned char lastBits = *B & mask;  
+    return (firstBits << 4) | lastBits;
+}
+
+size_t extractLSB2(unsigned char * img){
+    unsigned char mask = 0x03; // 00000011
+
+    unsigned char * A = img;
+    unsigned char * B = img+1;
+    unsigned char * C = img+2;
+    unsigned char * D = img+3;
+
+    unsigned char bitsA = *A & mask;
+    unsigned char bitsB = *B & mask;
+    unsigned char bitsC = *C & mask;
+    unsigned char bitsD = *D & mask;
+
+    return (bitsA << 6) | (bitsB << 4) | (bitsC << 2) | bitsD;
 }
 
 
+Shadow * extractShadowFromImage(BMPImage * img,  int k){
+    unsigned char * image = img->data;
+    Shadow * shadow = malloc(sizeof(Shadow));
+    shadow->shadowNumber = img->fileHeader.bfReserved1;
+    int t = (img->bitsPerPixel * img->width * img->height)/(2*k-2);
+    shadow->t = t;
+    shadow->shadow = malloc(t * sizeof(V));
+    for(int i = 0; i < t; i++){
+        if(k < 5) {
+            shadow->shadow[i].m = extractLSB4(image);
+            image = image+2;
+            shadow->shadow[i].d = extractLSB4(image);
+            image = image+2;
+        } else {
+            shadow->shadow[i].m = extractLSB2(image);
+            image = image+4;
+            shadow->shadow[i].d = extractLSB2(image);
+            image = image+4;
+        }
+    }
 
-// int main(int argc, char const *argv[])
-// {
-//     const char* filename = "blanco4x4.bmp";  // Replace with your BMP file path    
-//     // Read the BMP image
-//     BMPImage* image = readBMP(filename);
-//     if (image == NULL) {
-//         printf("Failed to read the BMP image.\n");
-//         return 1;
-//     }
+    return shadow;
+}
 
 
-//     srand(time(NULL));   // Initialization, should only be called once.
+int shadowsAreEqual(Shadow * s1, Shadow * s2){
+    if(s1->t != s2->t) return 0;
+    for(int i = 0; i < s2->t; i++){ 
+        if(s1->shadow[i].d != s2->shadow[i].d || s1->shadow[i].m != s2->shadow[i].m) return 0;
+    }
+    return 1;
+}
 
-//     printf("bitsPerPixel: %d\n", image->bitsPerPixel);
-//     printf("width: %d\n", image->width);
-//     printf("height: %d\n", image->height);
 
-//     int imageSize = image->bitsPerPixel * image->width * image->height;
-//     imageSize = imageSize > 0 ? imageSize: imageSize * -1;
-//     printf("imageSize: %d\n", imageSize);
+int main(int argc, char const *argv[])
+{
+    const char* filename = "../images/negro4x4.bmp";  // Replace with your BMP file path    
+    // Read the BMP image
+    BMPImage* image = readBMP(filename);
+    if (image == NULL) {
+        printf("Failed to read the BMP image.\n");
+        return 1;
+    }
 
-//     int k = 3;
-//     int n = 10;
-//     int t = imageSize/(2*k-2);
+    const char * filename2 = "../images/blanco4x4.bmp";
+    BMPImage* image2 = readBMP(filename2);
+    if (image2 == NULL) {
+        printf("Failed to read the BMP image2.\n");
+        return 1;
+    }
 
-//     printf("t: %d\n", t);
-//     ImageBlock * imageBlocks = decomposeImage(image, k);
-//     V ** vs = generateVs(imageBlocks, t, n);
+    srand(time(NULL));   // Initialization, should only be called once.
 
-//     return 0;
-// }
+    printf("bitsPerPixel: %d\n", image->bitsPerPixel);
+    printf("width: %d\n", image->width);
+    printf("height: %d\n", image->height);
+
+    int imageSize = image->bitsPerPixel * image->width * image->height;
+    imageSize = imageSize > 0 ? imageSize: imageSize * -1;
+    printf("imageSize: %d\n", imageSize);
+
+    int k = 3;
+    int n = 10;
+    int t = imageSize/(2*k-2);
+
+    printf("t: %d\n", t);
+    ImageBlock * imageBlocks = decomposeImage(image, k);
+    Shadow * shadows = generateShadows(imageBlocks, t, n);
+
+    
+    hideShadowInImage(image2, shadows[0], k);
+    Shadow * newShadow = extractShadowFromImage(image2, k);
+    
+    
+    int aux = shadowsAreEqual(&shadows[0], newShadow);
+    if(aux == 0){
+        printf("SON DISTINTAS\n");
+    } else {
+        printf("SON IGUALES BOB\n");
+    }
+    
+    return 0;
+}
