@@ -47,8 +47,6 @@ BMPImage *createBMP(int width, int height, int bitsPerPixel, unsigned char*data)
   image->width = width;
   image->height = height;
   image->bitsPerPixel = bitsPerPixel;
-  int bytesPerPixel = bitsPerPixel / 8;
-  int dataSize = width * height * bytesPerPixel;
   image->data = data;
   return image;
 }

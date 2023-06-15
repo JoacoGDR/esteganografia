@@ -1,29 +1,4 @@
-#include <stdio.h>
-#include "modularOperations.c"
-#include "BMPImage.c"
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include <math.h>
-
-struct ImageBlock {
-    int blockNumber;
-    size_t * f;
-    size_t * g;
-} typedef ImageBlock;
-
-struct V {
-    size_t m; //f evaluado
-    size_t d; //g evaluado
-} typedef V;
-
-
-struct Shadow {
-    size_t shadowNumber;
-    int t;
-    V * shadow; // v0,sn || v1,sn || v2,sn ...
-} typedef Shadow;
-
+#include "./shadowGeneration.h"
 
 //"123141562"
 unsigned char ** divideBytes(unsigned char* data, int datalength,  int blockSize){
@@ -106,7 +81,7 @@ ImageBlock * decomposeImage(BMPImage * image, int k){
         imageBlocks[i].g[1] = (-r2 * a0 - a1) % 251;
         imageBlocks[i].g[1] = imageBlocks[i].g[1] < 0? imageBlocks[i].g[1] + 251: imageBlocks[i].g[1];
 
-    }
+    } 
 
     return imageBlocks;
 }
@@ -209,55 +184,7 @@ unsigned char * hideShadowInImage(BMPImage * img, Shadow shadow, int k){
     return img->data;
 }
 
-size_t extractLSB4(unsigned char * img){
-    unsigned char mask = 0x0F;  // Mask to extract the 4 least significant bits
-    unsigned char * A = img;
-    unsigned char * B = img + 1;
-    unsigned char firstBits = *A & mask; 
-    unsigned char lastBits = *B & mask;  
-    return (firstBits << 4) | lastBits;
-}
 
-size_t extractLSB2(unsigned char * img){
-    unsigned char mask = 0x03; // 00000011
-
-    unsigned char * A = img;
-    unsigned char * B = img+1;
-    unsigned char * C = img+2;
-    unsigned char * D = img+3;
-
-    unsigned char bitsA = *A & mask;
-    unsigned char bitsB = *B & mask;
-    unsigned char bitsC = *C & mask;
-    unsigned char bitsD = *D & mask;
-
-    return (bitsA << 6) | (bitsB << 4) | (bitsC << 2) | bitsD;
-}
-
-
-Shadow * extractShadowFromImage(BMPImage * img,  int k){
-    unsigned char * image = img->data;
-    Shadow * shadow = malloc(sizeof(Shadow));
-    shadow->shadowNumber = img->fileHeader.bfReserved1;
-    int t = (img->bitsPerPixel * img->width * img->height)/(2*k-2);
-    shadow->t = t;
-    shadow->shadow = malloc(t * sizeof(V));
-    for(int i = 0; i < t; i++){
-        if(k < 5) {
-            shadow->shadow[i].m = extractLSB4(image);
-            image = image+2;
-            shadow->shadow[i].d = extractLSB4(image);
-            image = image+2;
-        } else {
-            shadow->shadow[i].m = extractLSB2(image);
-            image = image+4;
-            shadow->shadow[i].d = extractLSB2(image);
-            image = image+4;
-        }
-    }
-
-    return shadow;
-}
 
 
 int shadowsAreEqual(Shadow * s1, Shadow * s2){
