@@ -1,7 +1,13 @@
 #include "./modularOperations.h"
 
+
+
+int module(int a){
+    return a % MODULE;
+}
+
 int inverse(int a) {
-    return inverses[a];
+    return inverses[a % MODULE];
 }
 
 int divideBy(int a, int b) {

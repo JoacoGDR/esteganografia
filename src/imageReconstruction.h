@@ -1,5 +1,23 @@
-#include "shadowGeneration.c"
-#include "BMPImage.c"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef IMAGE_RECONSTRUCTION_H
+#define IMAGE_RECONSTRUCTION_H
+
+#include "shadowStructures.h"
+
+int extractLSB4(unsigned char * img);
+
+int extractLSB2(unsigned char * img);
+
+
+Shadow extractShadowFromImage(BMPImage * img,  int k);
+
+
+ImageBlock * reconstructBlocks(Shadow * shadows, int k);
+
+unsigned char * buildImageFromBlocks(ImageBlock * blocks, int t, int k);
+
+
+BMPImage * reconstructImage(BMPImage ** images, int k);
+
+
+
+#endif

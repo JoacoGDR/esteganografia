@@ -1,3 +1,7 @@
+#ifndef MODULAR_OPERATIONS_H
+#define MODULAR_OPERATIONS_H
+
+
 #include <stdio.h>
 
 #define MODULE 251
@@ -19,3 +23,16 @@ int inverses[] = {0, 1, 126, 84, 63, 201, 42, 36, 157, 28, 226,
                 46, 17, 238, 22, 121, 73, 79, 161, 111, 187, 5, 210, 183, 16, 60, 145, 154, 35, 245, 202, 
                 69, 148, 33, 156, 244, 43, 155, 38, 149, 170, 92, 225, 242, 158, 222, 10, 115, 120, 57, 239, 
                 138, 66, 237, 59, 47, 184, 233, 193, 230, 114, 25, 223, 94, 215, 209, 50, 188, 167, 125, 250};
+
+
+int inverse(int a);
+
+int divideBy(int a, int b);
+
+int multiplyBy(int a, int b);
+
+int sum(int a, int b);
+
+int substract(int a, int b);
+
+#endif

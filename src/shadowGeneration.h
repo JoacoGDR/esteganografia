@@ -1,25 +1,28 @@
-#include <stdio.h>
-#include "modularOperations.c"
-#include "BMPImage.c"
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include <math.h>
+#ifndef SHADOW_GENERATION_H
+#define SHADOW_GENERATION_H
 
-struct ImageBlock {
-    int blockNumber;
-    size_t * f;
-    size_t * g;
-} typedef ImageBlock;
+#include "shadowStructures.h"
 
-struct V {
-    size_t m; //f evaluado
-    size_t d; //g evaluado
-} typedef V;
+unsigned char ** divideBytes(unsigned char* data, int datalength,  int blockSize);
 
+int evaluate(int * f, int x, int n);
 
-struct Shadow {
-    size_t shadowNumber;
-    int t;
-    V * shadow; // v0,sn || v1,sn || v2,sn ...
-} typedef Shadow;
+Shadow * generateShadows(ImageBlock * blocks,int t, int n);
+
+ImageBlock * decomposeImage(BMPImage * image, int k);
+
+Shadow * generateShadowsFromFile(BMPImage * image, int k, int n);
+
+void stepBitsLSB2(unsigned char * byte, unsigned char X);
+
+void stepBitsLSB4(unsigned char * byte, unsigned char X);
+
+void printShadow(Shadow shadow);
+
+void hideShadowInImage(BMPImage * img, Shadow shadow, int k);
+
+int shadowsAreEqual(Shadow * s1, Shadow * s2);
+
+int test(int argc, char const *argv[]);
+
+#endif
