@@ -9,7 +9,7 @@ BINDIR = bin
 EXECUTABLE = steganography
 
 SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
+OBJECTS = $(OBJDIR)/main.o
 
 .PHONY: all clean
 
@@ -19,9 +19,9 @@ $(BINDIR)/$(EXECUTABLE): $(OBJECTS)
 	@mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
+$(OBJDIR)/main.o: $(SOURCES)
 	@mkdir -p $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
 	rm -rf $(BINDIR) $(OBJDIR)
