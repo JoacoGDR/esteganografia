@@ -42,9 +42,11 @@ typedef struct BMPImage {
   unsigned char *data;
   char * filename;
   unsigned char shadowNumber;
+  BITMAPINFOHEADER infoHeader;
+  BITMAPFILEHEADER fileHeader;
 } BMPImage;
 
-BMPImage *createBMP(char * filename, int width, int height, int bitsPerPixel, unsigned char* data, unsigned char shadowNumber);
+BMPImage *createBMP(char * filename, int width, int height, int bitsPerPixel, unsigned char* data, unsigned char shadowNumber, BITMAPFILEHEADER *fileHeader, BITMAPINFOHEADER *infoHeader);
 void createBMPFile(BMPImage *image);
 BMPImage *readBMP(const char* filename);
 void printImageData(BMPImage * img);

@@ -111,11 +111,11 @@ Shadow * generateShadowsFromFile(BMPImage * image, int k, int n){
     int t = imageSize/(2*k-2);
 
     ImageBlock * imageBlocks = decomposeImage(image, k); //b1, b2 ,b3 ... bt
-    printf("BLOQUES EXTRAIDOS: \n");
-    for(int i = 0; i < t; i++){
-        printBlock2(imageBlocks[i], k);
-    }
-    printf("------------\n");
+    // printf("BLOQUES EXTRAIDOS: \n");
+    // for(int i = 0; i < t; i++){
+    //     printBlock2(imageBlocks[i], k);
+    // }
+    // printf("------------\n");
 
     return generateShadows(imageBlocks, t, n);
 }

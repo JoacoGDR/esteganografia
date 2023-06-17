@@ -23,8 +23,8 @@ int main(int argc, char* argv[]){
     printf("carpeta: %s\n", imagesDirectory);
 
     int n = 3;
-    const char * imageToHide = "../images/negro4x4_2.bmp";
-    char * filenames[3] = {"../images/negro4x4.bmp", "../images/blanco4x4.bmp", "../images/test4x4.bmp"}; 
+    const char * imageToHide = "../images/Albertshare.bmp";
+    char * filenames[3] = {"../images/Johnshare.bmp", "../images/Jamesshare.bmp", "../images/Carlitosshare.bmp"}; 
     
     // Read the BMP image
     BMPImage* hiddenImage = readBMP(imageToHide);
@@ -72,21 +72,17 @@ int main(int argc, char* argv[]){
         // print error and do nothing
     }
 
+    //printf("HIDDEN\n----------------\n");
+    //printImageData(hiddenImage);
 
-    
     // Shadow * shadows = generateShadowsFromFile(hiddenImage, k, n);
 
     // for(int i = 0; i < n; i++){
     //     hideShadowInImage(participants[i], shadows[i], k);
     // }
-
-    // //empezar a recuperar
-    // BMPImage * reconstructedImage = reconstructImage(participants, k);
-
-    // printf("HIDDEN\n");
-    // printImageData(hiddenImage);
-    // printf("NEW\n");
-    // printImageData(reconstructedImage);
     
+    //printf("\n-------------------\nRECONSTRUCTED\n----------------\n");
+    // BMPImage * reconstructedImage = reconstructImage(participants, k);
+    //printImageData(reconstructedImage);
     return 0;
 }

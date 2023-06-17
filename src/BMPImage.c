@@ -3,7 +3,7 @@
 #include "BMPImage.h"
 
 
-BMPImage * createBMP(char * filename, int width, int height, int bitsPerPixel, unsigned char*data, unsigned char shadowNumber) {
+BMPImage * createBMP(char * filename, int width, int height, int bitsPerPixel, unsigned char*data, unsigned char shadowNumber, BITMAPFILEHEADER *fileHeader, BITMAPINFOHEADER *infoHeader) {
   BMPImage *image = malloc(sizeof(BMPImage));
   image->width = width;
   image->height = height;
@@ -11,10 +11,37 @@ BMPImage * createBMP(char * filename, int width, int height, int bitsPerPixel, u
   image->data = data;
   image->filename = filename;
   image->shadowNumber = shadowNumber;
+  image->fileHeader = *fileHeader;
+  image->infoHeader = *infoHeader;
+
 
   return image;
 }
 
+
+void printBMPFileHeader(BITMAPFILEHEADER *fileHeader) {
+  printf("File header:\n");
+  printf("  bfType: %x\n", fileHeader->bfType);
+  printf("  bfSize: %d\n", fileHeader->bfSize);
+  printf("  bfReserved1: %d\n", fileHeader->bfReserved1);
+  printf("  bfReserved2: %d\n", fileHeader->bfReserved2);
+  printf("  bfOffBits: %d\n", fileHeader->bfOffBits);
+}
+
+void printBMPInfoHeader(BITMAPINFOHEADER *infoHeader) {
+  printf("Info header:\n");
+  printf("  biSize: %d\n", infoHeader->biSize);
+  printf("  biWidth: %d\n", infoHeader->biWidth);
+  printf("  biHeight: %d\n", infoHeader->biHeight);
+  printf("  biPlanes: %d\n", infoHeader->biPlanes);
+  printf("  biBitCount: %d\n", infoHeader->biBitCount);
+  printf("  biCompression: %d\n", infoHeader->biCompression);
+  printf("  biSizeImage: %d\n", infoHeader->biSizeImage);
+  printf("  biXPelsPerMeter: %d\n", infoHeader->biXPelsPerMeter);
+  printf("  biYPelsPerMeter: %d\n", infoHeader->biYPelsPerMeter);
+  printf("  biClrUsed: %d\n", infoHeader->biClrUsed);
+  printf("  biClrImportant: %d\n", infoHeader->biClrImportant);
+}
 
 
 void createBMPFile(BMPImage *image) {
@@ -27,27 +54,33 @@ void createBMPFile(BMPImage *image) {
   
   // Write the file header.
   BITMAPFILEHEADER fileHeader;
-  fileHeader.bfType = 0x4D42;
-  fileHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + image->width * image->height * image->bitsPerPixel / 8;
-  fileHeader.bfReserved1 = image->shadowNumber;
-  fileHeader.bfReserved2 = 0;
-  fileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+  fileHeader.bfType = image->fileHeader.bfType;
+  fileHeader.bfSize = image->fileHeader.bfSize;
+  fileHeader.bfReserved1 = image->shadowNumber; //GUARDO el shadowNumber en el campo bfReserved1
+  fileHeader.bfReserved2 = image->fileHeader.bfReserved2;
+  fileHeader.bfOffBits = image->fileHeader.bfOffBits;//sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
   fwrite(&fileHeader, sizeof(fileHeader), 1, file);
+
+  printf("File Header of file %s:\n", image->filename);
+  printBMPFileHeader(&fileHeader);
   
   // Write the info header.
   BITMAPINFOHEADER infoHeader;
   infoHeader.biSize = sizeof(BITMAPINFOHEADER);
-  infoHeader.biWidth = image->width;
-  infoHeader.biHeight = image->height;
-  infoHeader.biPlanes = 1;
+  infoHeader.biWidth = image->infoHeader.biWidth;
+  infoHeader.biHeight = image->infoHeader.biHeight;
+  infoHeader.biPlanes = image->infoHeader.biPlanes;
   infoHeader.biBitCount = image->bitsPerPixel;
-  infoHeader.biCompression = 0;
-  infoHeader.biSizeImage = image->width * image->height * image->bitsPerPixel / 8;
-  infoHeader.biXPelsPerMeter = 0;
-  infoHeader.biYPelsPerMeter = 0;
-  infoHeader.biClrUsed = 0;
-  infoHeader.biClrImportant = 0;
+  infoHeader.biCompression = image->infoHeader.biCompression;
+  infoHeader.biSizeImage = image->infoHeader.biSizeImage;
+  infoHeader.biXPelsPerMeter = image->infoHeader.biXPelsPerMeter;
+  infoHeader.biYPelsPerMeter = image->infoHeader.biYPelsPerMeter;
+  infoHeader.biClrUsed = image->infoHeader.biClrUsed; //0
+  infoHeader.biClrImportant = image->infoHeader.biClrImportant; //0
   fwrite(&infoHeader, sizeof(infoHeader), 1, file);
+
+  printf("Info Header of file %s:\n", image->filename);
+  printBMPInfoHeader(&infoHeader);
   
   // Write the image data.
   fwrite(image->data, image->width * image->height * image->bitsPerPixel / 8, 1, file);
@@ -73,16 +106,21 @@ BMPImage *readBMP(const char* filename) {
     fclose(file);
     return NULL;
   }
+  printf("File Header of file %s:\n", filename);
+  printBMPFileHeader(&fileHeader);
   
   // Read the info header.
   BITMAPINFOHEADER infoHeader;
   fread(&infoHeader, sizeof(infoHeader), 1, file);
+
+  printf("Info Header of file %s:\n", filename);
+  printBMPInfoHeader(&infoHeader);
   
   // Read the image data.
   
   unsigned char* data = malloc(infoHeader.biSizeImage); 
   fread(data, infoHeader.biSizeImage, 1, file);
-  fclose(file);
+  fclose(file); 
   
   // Create the image structure.
   BMPImage *image = malloc(sizeof(BMPImage));
@@ -92,6 +130,12 @@ BMPImage *readBMP(const char* filename) {
   image->data = data;
   image->filename = filename;
   image->shadowNumber = fileHeader.bfReserved1;
+  image->fileHeader = fileHeader;
+  image->infoHeader = infoHeader;
+
+  printf("Testing si se está guardando bien: \n");
+  printBMPInfoHeader(&image->infoHeader);
+  printBMPFileHeader(&image->fileHeader);
   
   return image;
 }
@@ -107,23 +151,7 @@ void printImageData(BMPImage * img){
 
 
 int testBMPImage() {
- 
 
-  unsigned char * data = malloc(16);
-  for(int i = 0; i < 16; i++){
-    if(i % 7 == 0){
-      data[i] = 128;
-    } else {
-      data[i] = 0;
-    }
-  }
-
-
-  
-  BMPImage *image2 = createBMP("imagencreada.bmp",4, 4, 8, data, 0);
-  createBMPFile(image2);
-  free(data);
-  free(image2);
 
   // const char* filename = "mujer.bmp";  // Replace with your BMP file path
   

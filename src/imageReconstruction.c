@@ -89,7 +89,7 @@ ImageBlock * reconstructBlocks(Shadow * shadows, int k){
         polynomialCoefficients(fpoints,blocks[i].f,k-1); 
         polynomialCoefficients(gpoints,blocks[i].g,k-1);
         
-        printBlock(blocks[i],k);
+        // printBlock(blocks[i],k);
 
         free(fpoints);
         free(gpoints);
@@ -123,10 +123,6 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
     
     ImageBlock * blocks = reconstructBlocks(shadows,k);
 
-    // printf("BLOCKS DSP\n");
-    // for(int i = 0; i < shadows[0].t; i++){
-    //     printBlock(blocks[i],  k);
-    // }
     unsigned char * image = buildImageFromBlocks(blocks, shadows[0].t, k);
 
     BMPImage * img = malloc(sizeof(BMPImage));
@@ -138,11 +134,13 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
     img->data = malloc(images[0]->width * images[0]->height );
     img->shadowNumber = images[0]->shadowNumber;
     img->filename = "../secret/reconstructed.bmp";
+    img->fileHeader = images[0]->fileHeader;
+    img->infoHeader = images[0]->infoHeader;
 
     // printf("Image header: %s\n", img->fileHeader);
-    printf("Image width: %d\n", img->width);
-    printf("Image height: %d\n", img->height);
-    printf("Image bits per pixel: %d\n", img->bitsPerPixel);
+    // printf("Image width: %d\n", img->width);
+    // printf("Image height: %d\n", img->height);
+    // printf("Image bits per pixel: %d\n", img->bitsPerPixel);
 
     memcpy(img->data, image, images[0]->width * images[0]->height);
 

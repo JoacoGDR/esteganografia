@@ -3,24 +3,17 @@ CFLAGS = -Wall -Wextra -std=c99
 LDFLAGS = -lm
 
 SRCDIR = src
-OBJDIR = obj
 BINDIR = bin
 
-EXECUTABLE = steganography
-
 SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(OBJDIR)/main.o
+BIN = $(BINDIR)/main
 
 .PHONY: all clean
+ 
+all: $(BIN)
 
-all: $(BINDIR)/$(EXECUTABLE)
-
-$(BINDIR)/$(EXECUTABLE): $(OBJECTS)
+$(BINDIR)/main: $(SOURCES)
 	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ 
-
-$(OBJDIR)/main.o: $(SOURCES)
-	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
