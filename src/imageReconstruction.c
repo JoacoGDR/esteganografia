@@ -137,7 +137,7 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
     img->data = malloc(images[0]->width * images[0]->height );
     memcpy(img->data, image, images[0]->width * images[0]->height);
 
-    createBMPFile(img, "reconstructed.bmp");
+    createBMPFile(img, "../images/reconstructed.bmp");
 
     return img;
 }
