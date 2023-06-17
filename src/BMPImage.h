@@ -32,7 +32,8 @@ typedef struct {
   unsigned int biClrUsed; //the number of colors in the color palette, or 0 to default to 2n
   unsigned int biClrImportant; //the number of important colors used, or 0 when every color is important; generally ignored
 } BITMAPINFOHEADER;
-#pragma pack(pop);
+#pragma pack(pop)
+
 
 typedef struct BMPImage {
   int width;

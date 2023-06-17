@@ -8,10 +8,13 @@
 //main.o operacion imagen.bmp k carpeta_de_imagenes
 int main(int argc, char* argv[]){
     srand(time(NULL));   // Initialization, should only be called once.
-
+    if(argc != 5){
+        printf("Error: numero de argumentos invalido\n");
+        return 1;
+    }
     char* operation = argv[1];
     char* image = argv[2];
-    int* k = atoi(argv[3]);
+    int k = atoi(argv[3]);
     char* imagesDirectory = argv[4];
 
     printf("operacion: %s\n", operation);
@@ -20,7 +23,7 @@ int main(int argc, char* argv[]){
     printf("carpeta: %s\n", imagesDirectory);
 
 
-    int n = 3;//, k=3;
+    int n = 3;
     const char * imageToHide = "../images/negro4x4_2.bmp";
     const char * filenames[3] = {"../images/negro4x4.bmp", "../images/blanco4x4.bmp", "../images/test4x4.bmp"}; 
     

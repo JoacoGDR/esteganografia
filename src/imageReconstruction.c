@@ -86,8 +86,8 @@ ImageBlock * reconstructBlocks(Shadow * shadows, int k){
             gpoints[j].y = shadows[j].shadow[i].d;
         }
 
-        polynomialCoefficients(fpoints,k,blocks[i].f,k-1); 
-        polynomialCoefficients(gpoints,k,blocks[i].g,k-1);
+        polynomialCoefficients(fpoints,blocks[i].f,k-1); 
+        polynomialCoefficients(gpoints,blocks[i].g,k-1);
         
         printBlock(blocks[i],k);
 
@@ -137,7 +137,7 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
     img->width = images[0]->width;
     img->data = malloc(images[0]->width * images[0]->height );
 
-    printf("Image header: %s\n", img->fileHeader);
+    // printf("Image header: %s\n", img->fileHeader);
     printf("Image width: %d\n", img->width);
     printf("Image height: %d\n", img->height);
     printf("Image bits per pixel: %d\n", img->bitsPerPixel);

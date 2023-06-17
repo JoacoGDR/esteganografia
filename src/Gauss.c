@@ -216,7 +216,7 @@ int modInverse(int n) {
     return t;
 }
 
-void polynomialCoefficients(Point* points, int numPoints, int* coefficients, int degree) {
+void polynomialCoefficients(Point* points, int* coefficients, int degree) {
     int n = degree + 1;
 
     // Initialize matrix and vector

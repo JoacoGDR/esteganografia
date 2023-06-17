@@ -14,7 +14,7 @@ int mod(int n);
 
 int modInverse(int n);
 
-void polynomialCoefficients(Point* points, int numPoints, int * coefficients, int degree);
+void polynomialCoefficients(Point* points, int * coefficients, int degree);
 
 
 int check(Point p, int * coefficients, int degree);
