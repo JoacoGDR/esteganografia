@@ -2,10 +2,22 @@
 #include <stdlib.h>
 #include "imageReconstruction.h" 
 #include "shadowGeneration.h" 
+#include "BMPImage.h"
 #include <time.h>
 
-int main(void){
+int main(int argc, char* argv[]){
     srand(time(NULL));   // Initialization, should only be called once.
+
+    char* operation = argv[1];
+    char* image = argv[2];
+    int* kNumber = atoi(argv[3]);
+    char* imagesDirectory = argv[4];
+
+    printf("operacion: %s\n", operation);
+    printf("imagen: %s\n", image);
+    printf("k: %d\n", kNumber);
+    printf("carpeta: %s\n", imagesDirectory);
+
 
     int n = 3, k=3;
     const char * imageToHide = "../images/negro4x4_2.bmp";
