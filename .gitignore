@@ -42,7 +42,7 @@ local.properties
 .DS_Store
 .vscode/*
 target/
-
+imagesSinTocar/
 
 # Prerequisites
 *.d

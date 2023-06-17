@@ -40,14 +40,14 @@ typedef struct BMPImage {
   int height;
   int bitsPerPixel;
   unsigned char *data;
-  BITMAPFILEHEADER fileHeader;
+  char * filename;
+  unsigned char shadowNumber;
 } BMPImage;
 
-BMPImage *createBMP(int width, int height, int bitsPerPixel, unsigned char* data);
-void createBMPFile(BMPImage *image, const char* filename);
+BMPImage *createBMP(char * filename, int width, int height, int bitsPerPixel, unsigned char* data, unsigned char shadowNumber);
+void createBMPFile(BMPImage *image);
 BMPImage *readBMP(const char* filename);
 void printImageData(BMPImage * img);
-
 int testBMPImage();
 
 #endif /* BMPIMAGE_H */

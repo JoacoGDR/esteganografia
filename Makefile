@@ -17,7 +17,7 @@ all: $(BINDIR)/$(EXECUTABLE)
 
 $(BINDIR)/$(EXECUTABLE): $(OBJECTS)
 	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ 
 
 $(OBJDIR)/main.o: $(SOURCES)
 	@mkdir -p $(OBJDIR)

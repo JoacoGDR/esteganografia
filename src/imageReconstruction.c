@@ -34,7 +34,7 @@ int extractLSB2(unsigned char * img){
 Shadow extractShadowFromImage(BMPImage * img,  int k){
     unsigned char * image = img->data;
     Shadow shadow;
-    shadow.shadowNumber = img->fileHeader.bfReserved1;
+    shadow.shadowNumber = img->shadowNumber;
     int t = (img->width * img->height)/(2*k-2);
     shadow.t = t;
     shadow.shadow = malloc(t * sizeof(V));
@@ -131,11 +131,13 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
 
     BMPImage * img = malloc(sizeof(BMPImage));
     
-    img->fileHeader = images[0]->fileHeader;
+    // img->fileHeader = images[0]->fileHeader;
     img->bitsPerPixel = images[0]->bitsPerPixel;
     img->height = images[0]->height;
     img->width = images[0]->width;
     img->data = malloc(images[0]->width * images[0]->height );
+    img->shadowNumber = images[0]->shadowNumber;
+    img->filename = "../secret/reconstructed.bmp";
 
     // printf("Image header: %s\n", img->fileHeader);
     printf("Image width: %d\n", img->width);
@@ -144,7 +146,7 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
 
     memcpy(img->data, image, images[0]->width * images[0]->height);
 
-    createBMPFile(img, "../images/reconstructed.bmp");
+    createBMPFile(img);
 
     return img;
 }

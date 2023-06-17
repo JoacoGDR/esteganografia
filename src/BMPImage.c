@@ -3,18 +3,23 @@
 #include "BMPImage.h"
 
 
-BMPImage *createBMP(int width, int height, int bitsPerPixel, unsigned char*data) {
+BMPImage * createBMP(char * filename, int width, int height, int bitsPerPixel, unsigned char*data, unsigned char shadowNumber) {
   BMPImage *image = malloc(sizeof(BMPImage));
   image->width = width;
   image->height = height;
   image->bitsPerPixel = bitsPerPixel;
   image->data = data;
+  image->filename = filename;
+  image->shadowNumber = shadowNumber;
+
   return image;
 }
 
-void createBMPFile(BMPImage *image, const char* filename) {
+
+
+void createBMPFile(BMPImage *image) {
   // Open the file.
-  FILE* file = fopen(filename,"wb");
+  FILE* file = fopen(image->filename,"wb");
   if (file == NULL) {
     printf("Could not open file.\n");
     return;
@@ -24,7 +29,7 @@ void createBMPFile(BMPImage *image, const char* filename) {
   BITMAPFILEHEADER fileHeader;
   fileHeader.bfType = 0x4D42;
   fileHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + image->width * image->height * image->bitsPerPixel / 8;
-  fileHeader.bfReserved1 = 0;
+  fileHeader.bfReserved1 = image->shadowNumber;
   fileHeader.bfReserved2 = 0;
   fileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
   fwrite(&fileHeader, sizeof(fileHeader), 1, file);
@@ -85,7 +90,8 @@ BMPImage *readBMP(const char* filename) {
   image->height = infoHeader.biHeight;
   image->bitsPerPixel = infoHeader.biBitCount;
   image->data = data;
-  image->fileHeader = fileHeader;
+  image->filename = filename;
+  image->shadowNumber = fileHeader.bfReserved1;
   
   return image;
 }
@@ -114,8 +120,8 @@ int testBMPImage() {
 
 
   
-  BMPImage *image2 = createBMP(4, 4, 8, data);
-  createBMPFile(image2, "imagencreada.bmp");
+  BMPImage *image2 = createBMP("imagencreada.bmp",4, 4, 8, data, 0);
+  createBMPFile(image2);
   free(data);
   free(image2);
 

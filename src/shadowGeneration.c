@@ -178,7 +178,7 @@ void printShadow(Shadow shadow) {
 void hideShadowInImage(BMPImage * img, Shadow shadow, int k){
 
     unsigned char * image = img->data;
-    img->fileHeader.bfReserved1 = shadow.shadowNumber;
+    img->shadowNumber = shadow.shadowNumber;
     V * vs = shadow.shadow;
     int t = shadow.t;
     if(k < 5) {
@@ -196,6 +196,7 @@ void hideShadowInImage(BMPImage * img, Shadow shadow, int k){
             image = image+4;
         }
     }
+    createBMPFile(img);
 }
 
 int shadowsAreEqual(Shadow * s1, Shadow * s2){
