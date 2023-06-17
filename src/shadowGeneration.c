@@ -44,10 +44,7 @@ Shadow * generateShadows(ImageBlock * blocks,int t, int n){
 
 //a:[012..k-1]   b:[k...2k-2-1]
 ImageBlock * decomposeImage(BMPImage * image, int k){
-
-
-    int r = rand() %251;
-
+    
     int imageSize = image->width * image->height;
     imageSize = imageSize > 0 ? imageSize: imageSize * -1;
     unsigned char * imageBytes = image->data;

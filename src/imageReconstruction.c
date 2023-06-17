@@ -130,11 +130,18 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
     unsigned char * image = buildImageFromBlocks(blocks, shadows[0].t, k);
 
     BMPImage * img = malloc(sizeof(BMPImage));
-
+    
     img->fileHeader = images[0]->fileHeader;
+    img->bitsPerPixel = images[0]->bitsPerPixel;
     img->height = images[0]->height;
     img->width = images[0]->width;
     img->data = malloc(images[0]->width * images[0]->height );
+
+    printf("Image header: %s\n", img->fileHeader);
+    printf("Image width: %d\n", img->width);
+    printf("Image height: %d\n", img->height);
+    printf("Image bits per pixel: %d\n", img->bitsPerPixel);
+
     memcpy(img->data, image, images[0]->width * images[0]->height);
 
     createBMPFile(img, "../images/reconstructed.bmp");

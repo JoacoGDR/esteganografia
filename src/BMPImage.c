@@ -100,51 +100,51 @@ void printImageData(BMPImage * img){
 }
 
 
-// int main() {
+int testBMPImage() {
  
 
-//   unsigned char * data = malloc(16);
-//   for(int i = 0; i < 16; i++){
-//     if(i % 7 == 0){
-//       data[i] = 128;
-//     } else {
-//       data[i] = 0;
-//     }
-//   }
+  unsigned char * data = malloc(16);
+  for(int i = 0; i < 16; i++){
+    if(i % 7 == 0){
+      data[i] = 128;
+    } else {
+      data[i] = 0;
+    }
+  }
 
 
   
-//   BMPImage *image2 = createBMP(4, 4, 8, data);
-//   createBMPFile(image2, "imagencreada.bmp");
-//   free(data);
-//   free(image2);
+  BMPImage *image2 = createBMP(4, 4, 8, data);
+  createBMPFile(image2, "imagencreada.bmp");
+  free(data);
+  free(image2);
 
-//   const char* filename = "mujer.bmp";  // Replace with your BMP file path
+  // const char* filename = "mujer.bmp";  // Replace with your BMP file path
   
-//   // Read the BMP image
-//   BMPImage* image = readBMP(filename);
-//   if (image == NULL) {
-//     printf("Failed to read the BMP image.\n");
-//     return 1;
-//   }
+  // // Read the BMP image
+  // BMPImage* image = readBMP(filename);
+  // if (image == NULL) {
+  //   printf("Failed to read the BMP image.\n");
+  //   return 1;
+  // }
   
-//   // Print the image properties
-//   printf("Image Properties:\n");
-//   printf("Width: %d pixels\n", image->width);
-//   printf("Height: %d pixels\n", image->height);
-//   printf("Bits Per Pixel: %d\n", image->bitsPerPixel);
-//   int imageSize = image->width * image->height;
+  // // Print the image properties
+  // printf("Image Properties:\n");
+  // printf("Width: %d pixels\n", image->width);
+  // printf("Height: %d pixels\n", image->height);
+  // printf("Bits Per Pixel: %d\n", image->bitsPerPixel);
+  // int imageSize = image->width * image->height;
 
-//   for(int i = 0; i < imageSize; i++)
-//     printf("%d-", image->data[i]);
+  // for(int i = 0; i < imageSize; i++)
+  //   printf("%d-", image->data[i]);
   
-//   printf("imageSize: %d\n", imageSize);
-//   // Cleanup
-//   free(image->data);
-//   free(image);
+  // printf("imageSize: %d\n", imageSize);
+  // // Cleanup
+  // free(image->data);
+  // free(image);
 
-//   return 0;
-// }
+  return 0;
+}
 
 
 
