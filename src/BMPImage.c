@@ -73,7 +73,7 @@ BMPImage *readBMP(const char* filename) {
   // Open the file.
   FILE* file = fopen(filename,"rb");
   if (file == NULL) {
-    printf("Could not open file.\n");
+    printf("Could not open file %s\n", filename);
     return NULL;
   }
   

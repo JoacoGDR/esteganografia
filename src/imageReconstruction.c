@@ -81,42 +81,18 @@ int validateCheating(int * f, int * g){
     // imageBlocks[i].g[1] = (-r * a1) % 251; //-r * a1 = b1 => r = -b1/a1 ==> -b1/a1 == -b0/a0 => b1/b0 == a1/a0
     // imageBlocks[i].g[1] = imageBlocks[i].g[1] < 0? imageBlocks[i].g[1] + 251: imageBlocks[i].g[1];
     
-    int a0 = f[0] == 0 ? 1:f[0];
-    int a1 = f[1] == 0 ? 1:f[1];
-    // int a1 = f[1];
-    // int a0 = f[0];
+    // int a0 = f[0] == 0 ? 1:f[0];
+    // int a1 = f[1] == 0 ? 1:f[1];
+    int a1 = f[1];
+    int a0 = f[0];
 
     for(int r = 0; r < 251; r++){
-        /*
-        int b0 = (-r * a0) % 251;
-        int b1 = (-r * a1) % 251;
-        b0 = b0 < 0 ? b0 + 251 : b0;
-        b1 = b1 < 0 ? b1 + 251 : b1;
-        */
-        /*
-        for (int i = 0; i < 251; i++){
-            if ( (coefficients[k] == mul(mod(-i) , a_0 )) && (coefficients[k+1] == mul(mod(-i),  a_1) ) )
-                valid = 1;
-        }
-        if (! valid){
-            printf("One invalid shadow was provided. ");
-            exit(EXIT_FAILURE);
-        }
-        r*a0+b0=0
-        r*a1+b1=0
-
-        */
 
 
         if((r * a0 + g[0])%251 == 0 && (r * a1 + g[1])%251 == 0){
             return 1;
         }
-        // if(((r * a0) + g[0])%251 == r && ((r * a1) + g[1])%251 == 0){
-        //     return 1;
-        // }
-        // if(((r * a0) + g[0])%251 == 0 && ((r * a1) + g[1])%251 == r){
-        //     return 1;
-        // }
+
     }
     return 0;
 }

@@ -35,7 +35,7 @@ char ** getFiles(const char * folderPath, int * n){
             const char *extension = strrchr(entry->d_name, '.');
             if (extension == NULL || strcmp(extension, ".bmp") != 0) {
                 // return error
-                perror("The file isn't in .bmp format");
+                printf("The file %s isn't in .bmp format", entry->d_name);
                 exit(EXIT_FAILURE);
 
             }
@@ -63,12 +63,22 @@ int main(int argc, char* argv[]){
     char* image = argv[2];
     int k = atoi(argv[3]);
     char* imagesDirectory = argv[4];
+    printf("k: %d\n", k);
 
     int n;
+
+    printf("Getting files...\n");
     char ** filenames = getFiles(imagesDirectory, &n);
+    for(int i = 0; i < n; i++){
+        printf("%s\n", filenames[i]);
+    }
+
     // int n=3;
     // char * filenames[3] = {"../images/Albertshare.bmp", "../images/Carlitosshare.bmp", "../images/Johnshare.bmp"};
 
+
+
+    printf("Reading %d images...\n", n);
     BMPImage ** participants = malloc(sizeof(BMPImage*)* (n));
     int width, height;
     for(int i = 0; i < n; i++){
@@ -92,8 +102,11 @@ int main(int argc, char* argv[]){
         }
     }
 
+
+
     if(operation == 'd'){
         // Read the BMP image
+        printf("Reading image to hide...\n");
         const char * imageToHide = image;
         BMPImage* hiddenImage = readBMP(imageToHide);
         if (hiddenImage == NULL) {
@@ -101,15 +114,22 @@ int main(int argc, char* argv[]){
             return 1;
         }
 
+        printf("Generating shadows...\n");
+
         Shadow * shadows = generateShadowsFromFile(hiddenImage, k, n);
 
+        printf("Hiding shadows...\n");
         for(int i = 0; i < n; i++){
             hideShadowInImage(participants[i], shadows[i], k);
         }
+        printf("Image hidden\n");
+
     } else if(operation == 'r'){
+        printf("Reconstructing image...\n");
 
         //BMPImage * reconstructedImage = reconstructImage(image, participants, k);
         reconstructImage(image, participants, k);
+        printf("Image reconstructed\n");
     } else {
 
         printf("Error: operacion invalida. Debería ser: \'d\' para esconder la file o \'r\' para recuperarla\n");

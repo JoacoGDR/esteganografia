@@ -7,7 +7,7 @@ unsigned char ** divideBytes(unsigned char* data, int datalength,  int blockSize
 
 int evaluate(int * f, int x, int n);
 
-Shadow * generateShadows(ImageBlock * blocks,int t, int n);
+Shadow * generateShadows(ImageBlock * blocks,int t, int n, int k);
 
 ImageBlock * decomposeImage(BMPImage * image, int k);
 

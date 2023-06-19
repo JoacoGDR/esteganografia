@@ -28,15 +28,15 @@ int evaluate(int * f, int x, int n){
     return result % 251;
 }
 
-Shadow * generateShadows(ImageBlock * blocks,int t, int n){
+Shadow * generateShadows(ImageBlock * blocks,int t, int n, int k){
     Shadow * shadows = malloc(n * sizeof(Shadow));
     for(int i =0; i<n; i++){
         shadows[i].shadow = malloc(t * sizeof(V));
         shadows[i].shadowNumber = i + 1;
         shadows[i].t=t;
         for (int j = 0; j < t; j++){
-            shadows[i].shadow[j].m = evaluate(blocks[j].f, shadows[i].shadowNumber,n);
-            shadows[i].shadow[j].d = evaluate(blocks[j].g, shadows[i].shadowNumber,n);
+            shadows[i].shadow[j].m = evaluate(blocks[j].f, shadows[i].shadowNumber,k);
+            shadows[i].shadow[j].d = evaluate(blocks[j].g, shadows[i].shadowNumber,k);
         }
     }
     return shadows;
@@ -73,11 +73,11 @@ ImageBlock * decomposeImage(BMPImage * image, int k){
             }
         }
 
-        int a0 = imageBlocks[i].f[0] == 0 ? 1: imageBlocks[i].f[0];
-        int a1 = imageBlocks[i].f[1] == 0 ? 1: imageBlocks[i].f[1];
+        int a0 = imageBlocks[i].f[0];// == 0 ? 1: imageBlocks[i].f[0];
+        int a1 = imageBlocks[i].f[1];// == 0 ? 1: imageBlocks[i].f[1];
 
         int r = rand() % 251;
-        
+         //b0 + a0*r = 0 => -a0*r = b0 
         imageBlocks[i].g[0] = (-r * a0) % 251;  //-r * a0 = b0  => r = -b0/a0
         imageBlocks[i].g[0] = imageBlocks[i].g[0] < 0? imageBlocks[i].g[0] + 251: imageBlocks[i].g[0];
 
@@ -111,7 +111,7 @@ Shadow * generateShadowsFromFile(BMPImage * image, int k, int n){
 
     ImageBlock * imageBlocks = decomposeImage(image, k); //b1, b2 ,b3 ... bt
 
-    return generateShadows(imageBlocks, t, n);
+    return generateShadows(imageBlocks, t, n,k);
 }
 
 // TODO: Hacer generico =>  StepBits LSB
@@ -175,14 +175,18 @@ void hideShadowInImage(BMPImage * img, Shadow shadow, int k){
     V * vs = shadow.shadow;
     int t = shadow.t;
     if(k < 5) {
+        
         for(int i = 0; i < t; i++){
+
             stepBitsLSB4(image, vs[i].m);
             image = image+2;
             stepBitsLSB4(image, vs[i].d);
             image = image+2;
         }
     } else {
+        printf("k > 4\n");
         for(int i = 0; i < t; i++){
+        
             stepBitsLSB2(image, vs[i].m);
             image = image+4;
             stepBitsLSB2(image, vs[i].d);
