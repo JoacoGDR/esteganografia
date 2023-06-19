@@ -16,7 +16,7 @@ ImageBlock * reconstructBlocks(Shadow * shadows, int k);
 unsigned char * buildImageFromBlocks(ImageBlock * blocks, int t, int k);
 
 
-BMPImage * reconstructImage(BMPImage ** images, int k);
+BMPImage * reconstructImage(char * reconstructdImage, BMPImage ** images, int k);
 
 
 

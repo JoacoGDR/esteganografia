@@ -114,7 +114,7 @@ unsigned char * buildImageFromBlocks(ImageBlock * blocks, int t, int k){
     return image;
 }
 
-BMPImage * reconstructImage(BMPImage ** images, int k){
+BMPImage * reconstructImage(char * reconstructdImage, BMPImage ** images, int k){
 
     Shadow * shadows = malloc(k * sizeof(Shadow));
     for(int i = 0; i < k; i++){
@@ -133,7 +133,7 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
     img->width = images[0]->width;
     img->data = malloc(images[0]->width * images[0]->height );
     img->shadowNumber = images[0]->shadowNumber;
-    img->filename = "../secret/reconstructed.bmp";
+    img->filename = reconstructdImage;
     img->fileHeader = images[0]->fileHeader;
     img->infoHeader = images[0]->infoHeader;
     img->metadata = images[0]->metadata;

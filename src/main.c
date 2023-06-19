@@ -23,15 +23,7 @@ int main(int argc, char* argv[]){
     printf("carpeta: %s\n", imagesDirectory);
 
     int n = 3;
-    const char * imageToHide = "../images/Albertshare.bmp";
-    char * filenames[3] = {"../images/Johnshare.bmp", "../images/Jamesshare.bmp", "../images/Carlitosshare.bmp"}; 
-    
-    // Read the BMP image
-    BMPImage* hiddenImage = readBMP(imageToHide);
-    if (hiddenImage == NULL) {
-        printf("Failed to read the BMP image.\n");
-        return 1;
-    }
+    char * filenames[3] = {"../images/Johnshare.bmp", "../images/Jamesshare.bmp", "../images/Carlitosshare.bmp"};
 
     BMPImage ** participants = malloc(sizeof(BMPImage*)*n);
     int width, height;
@@ -57,6 +49,14 @@ int main(int argc, char* argv[]){
     }
 
     if(operation == 'd'){
+        // Read the BMP image
+        const char * imageToHide = image;
+        BMPImage* hiddenImage = readBMP(imageToHide);
+        if (hiddenImage == NULL) {
+            printf("Failed to read the BMP image.\n");
+            return 1;
+        }
+
         Shadow * shadows = generateShadowsFromFile(hiddenImage, k, n);
 
         for(int i = 0; i < n; i++){
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
         }
     } else if(operation == 'r'){
 
-        BMPImage * reconstructedImage = reconstructImage(participants, k);
+        BMPImage * reconstructedImage = reconstructImage(image, participants, k);
     } else {
 
         printf("Error: operacion invalida. Debería ser: \'d\' para esconder la file o \'r\' para recuperarla\n");
