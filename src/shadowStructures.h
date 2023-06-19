@@ -4,22 +4,22 @@
 #include "BMPImage.h"
 
 
-struct ImageBlock {
+typedef struct ImageBlock {
     int blockNumber;
     int * f;
     int * g;
-} typedef ImageBlock;
+} ImageBlock;
 
-struct V {
+typedef struct V {
     int m; //f evaluado
     int d; //g evaluado
-} typedef V;
+} V;
 
-struct Shadow {
+typedef struct Shadow {
     int shadowNumber;
     int t;
     V * shadow; // v0,sn || v1,sn || v2,sn ...
-} typedef Shadow;
+} Shadow;
 
 #endif
 
