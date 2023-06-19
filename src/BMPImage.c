@@ -44,9 +44,6 @@ void createBMPFile(BMPImage *image) {
   fileHeader.bfReserved2 = image->fileHeader.bfReserved2;
   fileHeader.bfOffBits = image->fileHeader.bfOffBits;//sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
   fwrite(&fileHeader, sizeof(fileHeader), 1, file);
-
-  printf("File Header of file %s:\n", image->filename);
-  printBMPFileHeader(&fileHeader);
   
   // Write the info header.
   BITMAPINFOHEADER infoHeader;
@@ -63,19 +60,8 @@ void createBMPFile(BMPImage *image) {
   infoHeader.biClrImportant = image->infoHeader.biClrImportant; //0
   fwrite(&infoHeader, sizeof(infoHeader), 1, file);
 
-
-  printf("Info Header of file %s:\n", image->filename);
-  printBMPInfoHeader(&infoHeader);
-  
-
   // Write the image data.
-  printf("before writing metadata\n");
-
   fwrite(image->metadata, 1024, 1, file); //escribo los 1024 bytes de metadata (que son 0s
-
-  printf("After writing metadata\n");
-
-  //fseek(file, fileHeader.bfOffBits, SEEK_SET);
 
   fwrite(image->data, image->width * image->height, 1, file);
 
@@ -100,30 +86,19 @@ BMPImage *readBMP(const char* filename) {
     fclose(file);
     return NULL;
   }
-  printf("File Header of file %s:\n", filename);
-  printBMPFileHeader(&fileHeader);
   
   // Read the info header.
   BITMAPINFOHEADER infoHeader;
   fread(&infoHeader, sizeof(infoHeader), 1, file);
 
-  printf("Info Header of file %s:\n", filename);
-  printBMPInfoHeader(&infoHeader);
-  
   // Read the image data.
   unsigned char * metadata = malloc(1024 * sizeof(unsigned char));
-  printf("before read metadata\n");
   fread(metadata, 1024 ,1,file);
-
-  printf("After reading metadata\n");
-
-  //fseek(file, fileHeader.bfOffBits, SEEK_SET);
   
   unsigned char* data = malloc(infoHeader.biSizeImage); 
   fread(data, infoHeader.biSizeImage, 1, file);
   fclose(file); 
 
-  
   // Create the image structure.
   BMPImage *image = malloc(sizeof(BMPImage));
   image->width = infoHeader.biWidth;
@@ -135,10 +110,6 @@ BMPImage *readBMP(const char* filename) {
   image->fileHeader = fileHeader;
   image->infoHeader = infoHeader;
   image->metadata= metadata;
-
-  printf("Testing si se está guardando bien: \n");
-  printBMPInfoHeader(&image->infoHeader);
-  printBMPFileHeader(&image->fileHeader);
   
   return image;
 }
@@ -150,37 +121,6 @@ void printImageData(BMPImage * img){
     printf("%hhu-", img->data[i]);
   }
   printf("\n");
-}
-
-
-int testBMPImage() {
-
-
-  // const char* filename = "mujer.bmp";  // Replace with your BMP file path
-  
-  // // Read the BMP image
-  // BMPImage* image = readBMP(filename);
-  // if (image == NULL) {
-  //   printf("Failed to read the BMP image.\n");
-  //   return 1;
-  // }
-  
-  // // Print the image properties
-  // printf("Image Properties:\n");
-  // printf("Width: %d pixels\n", image->width);
-  // printf("Height: %d pixels\n", image->height);
-  // printf("Bits Per Pixel: %d\n", image->bitsPerPixel);
-  // int imageSize = image->width * image->height;
-
-  // for(int i = 0; i < imageSize; i++)
-  //   printf("%d-", image->data[i]);
-  
-  // printf("imageSize: %d\n", imageSize);
-  // // Cleanup
-  // free(image->data);
-  // free(image);
-
-  return 0;
 }
 
 

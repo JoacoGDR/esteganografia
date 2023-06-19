@@ -76,13 +76,12 @@ ImageBlock * decomposeImage(BMPImage * image, int k){
         int a0 = imageBlocks[i].f[0] == 0 ? 1: imageBlocks[i].f[0];
         int a1 = imageBlocks[i].f[1] == 0 ? 1: imageBlocks[i].f[1];
 
-        int r1 = rand() %251;
-        int r2 = rand() %251;
+        int r = rand() % 251;
         
-        imageBlocks[i].g[0] = (-r1 * a0 - a1) % 251;
+        imageBlocks[i].g[0] = (-r * a0) % 251;  //-r * a0 = b0  => r = -b0/a0
         imageBlocks[i].g[0] = imageBlocks[i].g[0] < 0? imageBlocks[i].g[0] + 251: imageBlocks[i].g[0];
 
-        imageBlocks[i].g[1] = (-r2 * a0 - a1) % 251;
+        imageBlocks[i].g[1] = (-r * a1) % 251; //-r * a1 = b1 => r = -b1/a1 ==> a0*a1 = b0*b1
         imageBlocks[i].g[1] = imageBlocks[i].g[1] < 0? imageBlocks[i].g[1] + 251: imageBlocks[i].g[1];
     } 
     return imageBlocks;
@@ -111,11 +110,6 @@ Shadow * generateShadowsFromFile(BMPImage * image, int k, int n){
     int t = imageSize/(2*k-2);
 
     ImageBlock * imageBlocks = decomposeImage(image, k); //b1, b2 ,b3 ... bt
-    // printf("BLOQUES EXTRAIDOS: \n");
-    // for(int i = 0; i < t; i++){
-    //     printBlock2(imageBlocks[i], k);
-    // }
-    // printf("------------\n");
 
     return generateShadows(imageBlocks, t, n);
 }
@@ -176,7 +170,6 @@ void printShadow(Shadow shadow) {
 }
 
 void hideShadowInImage(BMPImage * img, Shadow shadow, int k){
-
     unsigned char * image = img->data;
     img->shadowNumber = shadow.shadowNumber;
     V * vs = shadow.shadow;
@@ -206,52 +199,3 @@ int shadowsAreEqual(Shadow * s1, Shadow * s2){
     }
     return 1;
 }
-
-// int test(int argc, char const *argv[])
-// {
-//     const char* filename = "../images/negro4x4.bmp";  // Replace with your BMP file path    
-//     // Read the BMP image
-//     BMPImage* image = readBMP(filename);
-//     if (image == NULL) {
-//         printf("Failed to read the BMP image.\n");
-//         return 1;
-//     }
-
-//     const char * filename2 = "../images/blanco4x4.bmp";
-//     BMPImage* image2 = readBMP(filename2);
-//     if (image2 == NULL) {
-//         printf("Failed to read the BMP image2.\n");
-//         return 1;
-//     }
-
-
-//     printf("bitsPerPixel: %d\n", image->bitsPerPixel);
-//     printf("width: %d\n", image->width);
-//     printf("height: %d\n", image->height);
-
-//     int imageSize = image->bitsPerPixel * image->width * image->height;
-//     imageSize = imageSize > 0 ? imageSize: imageSize * -1;
-//     printf("imageSize: %d\n", imageSize);
-
-//     int k = 3;
-//     int n = 10;
-//     int t = imageSize/(2*k-2);
-
-//     printf("t: %d\n", t);
-//     ImageBlock * imageBlocks = decomposeImage(image, k);
-//     Shadow * shadows = generateShadows(imageBlocks, t, n);
-
-    
-//     hideShadowInImage(image2, shadows[0], k);
-//     Shadow * newShadow = extractShadowFromImage(image2, k);
-    
-    
-//     int aux = shadowsAreEqual(&shadows[0], newShadow);
-//     if(aux == 0){
-//         printf("SON DISTINTAS\n");
-//     } else {
-//         printf("SON IGUALES BOB\n");
-//     }
-    
-//     return 0;
-// }

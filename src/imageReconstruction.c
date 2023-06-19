@@ -54,21 +54,72 @@ Shadow extractShadowFromImage(BMPImage * img,  int k){
     return shadow;
 }
 
-
 void printBlock(ImageBlock block, int k){
     printf("BLOCK %d: \n", block.blockNumber);
     for(int i = 0; i < k; i++){
-        printf("%d ", block.f[i]);
+        printf("f(%d)=%d ", i,block.f[i]);
 
     }
+
     for(int i = 0; i < k; i++){
         // if(i>1){
-            printf("%d ", block.g[i]);
+            printf("g(%d)=%d ", i, block.g[i]);
         // }
     }
     printf("\n");
 }
 
+int validateCheating(int * f, int * g){
+    // int a0 = imageBlocks[i].f[0] == 0 ? 1: imageBlocks[i].f[0];
+    // int a1 = imageBlocks[i].f[1] == 0 ? 1: imageBlocks[i].f[1];
+
+    // int r = rand() %251;
+
+    // imageBlocks[i].g[0] = (-r * a0) % 251;  //(-r * a0)%251 = b0  => r = -b0/a0
+    // imageBlocks[i].g[0] = imageBlocks[i].g[0] < 0? imageBlocks[i].g[0] + 251: imageBlocks[i].g[0];
+
+    // imageBlocks[i].g[1] = (-r * a1) % 251; //-r * a1 = b1 => r = -b1/a1 ==> -b1/a1 == -b0/a0 => b1/b0 == a1/a0
+    // imageBlocks[i].g[1] = imageBlocks[i].g[1] < 0? imageBlocks[i].g[1] + 251: imageBlocks[i].g[1];
+    
+    int a0 = f[0] == 0 ? 1:f[0];
+    int a1 = f[1] == 0 ? 1:f[1];
+    // int a1 = f[1];
+    // int a0 = f[0];
+
+    for(int r = 0; r < 251; r++){
+        /*
+        int b0 = (-r * a0) % 251;
+        int b1 = (-r * a1) % 251;
+        b0 = b0 < 0 ? b0 + 251 : b0;
+        b1 = b1 < 0 ? b1 + 251 : b1;
+        */
+        /*
+        for (int i = 0; i < 251; i++){
+            if ( (coefficients[k] == mul(mod(-i) , a_0 )) && (coefficients[k+1] == mul(mod(-i),  a_1) ) )
+                valid = 1;
+        }
+        if (! valid){
+            printf("One invalid shadow was provided. ");
+            exit(EXIT_FAILURE);
+        }
+        r*a0+b0=0
+        r*a1+b1=0
+
+        */
+
+
+        if((r * a0 + g[0])%251 == 0 && (r * a1 + g[1])%251 == 0){
+            return 1;
+        }
+        // if(((r * a0) + g[0])%251 == r && ((r * a1) + g[1])%251 == 0){
+        //     return 1;
+        // }
+        // if(((r * a0) + g[0])%251 == 0 && ((r * a1) + g[1])%251 == r){
+        //     return 1;
+        // }
+    }
+    return 0;
+}
 
 ImageBlock * reconstructBlocks(Shadow * shadows, int k){
     int t = shadows[0].t;
@@ -88,15 +139,18 @@ ImageBlock * reconstructBlocks(Shadow * shadows, int k){
 
         polynomialCoefficients(fpoints,blocks[i].f,k-1); 
         polynomialCoefficients(gpoints,blocks[i].g,k-1);
-        
-        // printBlock(blocks[i],k);
 
+        if(validateCheating(blocks[i].f,blocks[i].g) == 0){
+            printBlock(blocks[i],k);
+            perror("Wrong value of r - You're cheating!");
+            // exit(EXIT_FAILURE);
+        }
+    
         free(fpoints);
         free(gpoints);
     }
     return blocks;
 }
-
 
 unsigned char * buildImageFromBlocks(ImageBlock * blocks, int t, int k){
     unsigned char * image = malloc(t * (2*k-2) *sizeof(unsigned char));
@@ -115,7 +169,7 @@ unsigned char * buildImageFromBlocks(ImageBlock * blocks, int t, int k){
 }
 
 //BMPImage * reconstructImage(char * reconstructdImage, BMPImage ** images, int k){
-void reconstructImage(char * reconstructdImage, BMPImage ** images, int k){
+void reconstructImage(char * reconstructedImage, BMPImage ** images, int k){
 
     Shadow * shadows = malloc(k * sizeof(Shadow));
     for(int i = 0; i < k; i++){
@@ -134,21 +188,14 @@ void reconstructImage(char * reconstructdImage, BMPImage ** images, int k){
     img->width = images[0]->width;
     img->data = malloc(images[0]->width * images[0]->height );
     img->shadowNumber = images[0]->shadowNumber;
-    img->filename = reconstructdImage;
+    img->filename = reconstructedImage;
     img->fileHeader = images[0]->fileHeader;
     img->infoHeader = images[0]->infoHeader;
     img->metadata = images[0]->metadata;
 
-    // printf("Image header: %s\n", img->fileHeader);
-    // printf("Image width: %d\n", img->width);
-    // printf("Image height: %d\n", img->height);
-    // printf("Image bits per pixel: %d\n", img->bitsPerPixel);
-
     memcpy(img->data, image, images[0]->width * images[0]->height);
 
     createBMPFile(img);
-
-    //return img;
 }
 
 

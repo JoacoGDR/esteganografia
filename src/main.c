@@ -4,6 +4,53 @@
 #include "shadowGeneration.h" 
 #include "BMPImage.h"
 #include <time.h>
+#include <string.h>
+#include <dirent.h>
+
+void prependString(char* original, const char* prepend) {
+    char temp[strlen(original) + 1];  // Create a temporary string to hold the original value
+    strcpy(temp, original);  // Copy the original string to the temporary string
+    strcpy(original, prepend);  // Copy the prepend string to the original string
+    strcat(original, temp);  // Concatenate the temporary string (original value) to the original string
+}
+
+char ** getFiles(const char * folderPath, int * n){
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir(folderPath);
+    if (dir == NULL) {
+        perror("Unable to open directory");
+        *n = 0;
+        return NULL;
+    }
+
+    // Dynamically allocate memory for the file list
+    char ** fileList = NULL;
+    *n = 0;
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_REG) {  // Check if the entry is a regular file
+            // Increase the file count and reallocate memory for the updated file list
+            const char *extension = strrchr(entry->d_name, '.');
+            if (extension == NULL || strcmp(extension, ".bmp") != 0) {
+                // return error
+                perror("The file isn't in .bmp format");
+                exit(EXIT_FAILURE);
+
+            }
+            (*n)++;
+            fileList = realloc(fileList, (*n) * sizeof(char*));
+            fileList[*n - 1] = malloc((strlen(entry->d_name) + strlen(folderPath) + 1) * sizeof(char));
+            strcpy(fileList[*n - 1], entry->d_name);
+            prependString(fileList[*n - 1], folderPath);
+        }
+    }
+
+    closedir(dir);
+
+    return fileList;
+}
 
 //main.o operacion imagen.bmp k carpeta_de_imagenes
 int main(int argc, char* argv[]){
@@ -17,15 +64,12 @@ int main(int argc, char* argv[]){
     int k = atoi(argv[3]);
     char* imagesDirectory = argv[4];
 
-    printf("operacion: %c\n", operation);
-    printf("imagen: %s\n", image);
-    printf("k: %d\n", k);
-    printf("carpeta: %s\n", imagesDirectory);
+    int n;
+    char ** filenames = getFiles(imagesDirectory, &n);
+    // int n=3;
+    // char * filenames[3] = {"../images/Albertshare.bmp", "../images/Carlitosshare.bmp", "../images/Johnshare.bmp"};
 
-    int n = 3;
-    char * filenames[3] = {"../images/Johnshare.bmp", "../images/Jamesshare.bmp", "../images/Carlitosshare.bmp"};
-
-    BMPImage ** participants = malloc(sizeof(BMPImage*)*n);
+    BMPImage ** participants = malloc(sizeof(BMPImage*)* (n));
     int width, height;
     for(int i = 0; i < n; i++){
         participants[i] = readBMP(filenames[i]);
