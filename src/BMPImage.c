@@ -3,22 +3,6 @@
 #include "BMPImage.h"
 
 
-BMPImage * createBMP(char * filename, int width, int height, int bitsPerPixel, unsigned char*data, unsigned char shadowNumber, BITMAPFILEHEADER *fileHeader, BITMAPINFOHEADER *infoHeader) {
-  BMPImage *image = malloc(sizeof(BMPImage));
-  image->width = width;
-  image->height = height;
-  image->bitsPerPixel = bitsPerPixel;
-  image->data = data;
-  image->filename = filename;
-  image->shadowNumber = shadowNumber;
-  image->fileHeader = *fileHeader;
-  image->infoHeader = *infoHeader;
-
-
-  return image;
-}
-
-
 void printBMPFileHeader(BITMAPFILEHEADER *fileHeader) {
   printf("File header:\n");
   printf("  bfType: %x\n", fileHeader->bfType);
@@ -79,12 +63,22 @@ void createBMPFile(BMPImage *image) {
   infoHeader.biClrImportant = image->infoHeader.biClrImportant; //0
   fwrite(&infoHeader, sizeof(infoHeader), 1, file);
 
+
   printf("Info Header of file %s:\n", image->filename);
   printBMPInfoHeader(&infoHeader);
   
+
   // Write the image data.
-  fwrite(image->data, image->width * image->height * image->bitsPerPixel / 8, 1, file);
-  
+  printf("before writing metadata\n");
+
+  fwrite(image->metadata, 1024, 1, file); //escribo los 1024 bytes de metadata (que son 0s
+
+  printf("After writing metadata\n");
+
+  //fseek(file, fileHeader.bfOffBits, SEEK_SET);
+
+  fwrite(image->data, image->width * image->height, 1, file);
+
   // Close the file.
   fclose(file);
 }
@@ -117,10 +111,18 @@ BMPImage *readBMP(const char* filename) {
   printBMPInfoHeader(&infoHeader);
   
   // Read the image data.
+  unsigned char * metadata = malloc(1024 * sizeof(unsigned char));
+  printf("before read metadata\n");
+  fread(metadata, 1024 ,1,file);
+
+  printf("After reading metadata\n");
+
+  //fseek(file, fileHeader.bfOffBits, SEEK_SET);
   
   unsigned char* data = malloc(infoHeader.biSizeImage); 
   fread(data, infoHeader.biSizeImage, 1, file);
   fclose(file); 
+
   
   // Create the image structure.
   BMPImage *image = malloc(sizeof(BMPImage));
@@ -132,6 +134,7 @@ BMPImage *readBMP(const char* filename) {
   image->shadowNumber = fileHeader.bfReserved1;
   image->fileHeader = fileHeader;
   image->infoHeader = infoHeader;
+  image->metadata= metadata;
 
   printf("Testing si se está guardando bien: \n");
   printBMPInfoHeader(&image->infoHeader);

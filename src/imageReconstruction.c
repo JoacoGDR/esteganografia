@@ -136,6 +136,7 @@ BMPImage * reconstructImage(BMPImage ** images, int k){
     img->filename = "../secret/reconstructed.bmp";
     img->fileHeader = images[0]->fileHeader;
     img->infoHeader = images[0]->infoHeader;
+    img->metadata = images[0]->metadata;
 
     // printf("Image header: %s\n", img->fileHeader);
     // printf("Image width: %d\n", img->width);
