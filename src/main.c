@@ -64,7 +64,8 @@ int main(int argc, char* argv[]){
         }
     } else if(operation == 'r'){
 
-        BMPImage * reconstructedImage = reconstructImage(image, participants, k);
+        //BMPImage * reconstructedImage = reconstructImage(image, participants, k);
+        reconstructImage(image, participants, k);
     } else {
 
         printf("Error: operacion invalida. Debería ser: \'d\' para esconder la file o \'r\' para recuperarla\n");

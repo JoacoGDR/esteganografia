@@ -114,7 +114,8 @@ unsigned char * buildImageFromBlocks(ImageBlock * blocks, int t, int k){
     return image;
 }
 
-BMPImage * reconstructImage(char * reconstructdImage, BMPImage ** images, int k){
+//BMPImage * reconstructImage(char * reconstructdImage, BMPImage ** images, int k){
+void reconstructImage(char * reconstructdImage, BMPImage ** images, int k){
 
     Shadow * shadows = malloc(k * sizeof(Shadow));
     for(int i = 0; i < k; i++){
@@ -147,7 +148,7 @@ BMPImage * reconstructImage(char * reconstructdImage, BMPImage ** images, int k)
 
     createBMPFile(img);
 
-    return img;
+    //return img;
 }
 
 
