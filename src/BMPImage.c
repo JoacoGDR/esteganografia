@@ -130,7 +130,7 @@ BMPImage *readBMP(const char* filename) {
   image->height = infoHeader.biHeight;
   image->bitsPerPixel = infoHeader.biBitCount;
   image->data = data;
-  image->filename = filename;
+  image->filename = (char *)filename;
   image->shadowNumber = fileHeader.bfReserved1;
   image->fileHeader = fileHeader;
   image->infoHeader = infoHeader;
