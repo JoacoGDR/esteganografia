@@ -14,7 +14,7 @@ all: $(BIN)
 
 $(BINDIR)/main: $(SOURCES)
 	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 clean:
 	rm -rf $(BINDIR) $(OBJDIR)
