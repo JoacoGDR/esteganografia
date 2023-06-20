@@ -1,7 +1,7 @@
 #ifndef IMAGE_RECONSTRUCTION_H
 #define IMAGE_RECONSTRUCTION_H
 
-#include "shadowStructures.h"
+#include "./shadowStructures.h"
 
 int extractLSB4(unsigned char * img);
 

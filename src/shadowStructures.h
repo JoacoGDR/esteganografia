@@ -3,7 +3,6 @@
 
 #include "BMPImage.h"
 
-
 typedef struct ImageBlock {
     int blockNumber;
     int * f;

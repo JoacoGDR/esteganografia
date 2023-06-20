@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include "./shadowGeneration.h"
+#include "./modularOperations.h"
 
 //"123141562"
 unsigned char ** divideBytes(unsigned char* data, int datalength,  int blockSize){
@@ -73,16 +74,14 @@ ImageBlock * decomposeImage(BMPImage * image, int k){
             }
         }
 
-        int a0 = imageBlocks[i].f[0] == 0 ? 1: imageBlocks[i].f[0];
-        int a1 = imageBlocks[i].f[1] == 0 ? 1: imageBlocks[i].f[1];
+        int a0 = module(imageBlocks[i].f[0]) == 0 ? 1: imageBlocks[i].f[0];
+        int a1 = module(imageBlocks[i].f[1]) == 0 ? 1: imageBlocks[i].f[1];
 
         int r = rand() % 250 + 1;
          //b0 + a0*r = 0 => -a0*r = b0 
-        imageBlocks[i].g[0] = (-r * a0) % 250 + 1;  //-r * a0 = b0  => r = -b0/a0
-        imageBlocks[i].g[0] = imageBlocks[i].g[0] < 0? imageBlocks[i].g[0] + 251: imageBlocks[i].g[0];
+        imageBlocks[i].g[0] = module(module(-r) * a0);  //-r * a0 = b0  => r = -b0/a0
 
-        imageBlocks[i].g[1] = (-r * a1) % 250 + 1; //-r * a1 = b1 => r = -b1/a1 ==> a0*a1 = b0*b1
-        imageBlocks[i].g[1] = imageBlocks[i].g[1] < 0? imageBlocks[i].g[1] + 251: imageBlocks[i].g[1];
+        imageBlocks[i].g[1] = module(module(-r) * a1); //-r * a1 = b1 => r = -b1/a1 ==> a0*a1 = b0*b1
     } 
     return imageBlocks;
 }
@@ -102,7 +101,6 @@ void printBlock2(ImageBlock block, int k){
     printf("\n");
 }
 
-
 Shadow * generateShadowsFromFile(BMPImage * image, int k, int n){
     
     int imageSize = image->width * image->height;
@@ -113,13 +111,6 @@ Shadow * generateShadowsFromFile(BMPImage * image, int k, int n){
 
     return generateShadows(imageBlocks, t, n,k);
 }
-
-// TODO: Hacer generico =>  StepBits LSB
-// void stepBitsLSB(unsigned char * byte, unsigned char X, int lsbn)
-
-//TODO: Hacer generico => Extract LSB
-//void extract (unsigned char * byte, int * X, int lsbn)
-
 
 void stepBitsLSB2(unsigned char * byte, unsigned char X){
     unsigned char maskA = 0x03; // 00000011
@@ -142,7 +133,6 @@ void stepBitsLSB2(unsigned char * byte, unsigned char X){
     *C = (*C & ~maskA) | bitsC;
     *D = (*D & ~maskA) | bitsD;
 }
-
 
 void stepBitsLSB4(unsigned char * byte, unsigned char X) {
     unsigned char mask = 0x0F;  // Mask to extract the 4 least significant bits
@@ -184,7 +174,6 @@ void hideShadowInImage(BMPImage * img, Shadow shadow, int k){
             image = image+2;
         }
     } else {
-        printf("k > 4\n");
         for(int i = 0; i < t; i++){
         
             stepBitsLSB2(image, vs[i].m);

@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "imageReconstruction.h" 
-#include "shadowGeneration.h" 
 #include "BMPImage.h"
 #include <time.h>
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include "./imageReconstruction.h" 
+#include "./shadowGeneration.h" 
 
 
 
@@ -33,7 +33,7 @@ char ** getFiles(const char * folderPath, int * n){
     *n = 0;
 
     while ((entry = readdir(dir)) != NULL) {
-        if ((S_ISREG(entry->d_type))) {  // Check if the entry is a regular file
+        if (entry->d_type == DT_REG) {  // Check if the entry is a regular file
             // Increase the file count and reallocate memory for the updated file list
             const char *extension = strrchr(entry->d_name, '.');
             if (extension == NULL || strcmp(extension, ".bmp") != 0) {
@@ -76,11 +76,7 @@ int main(int argc, char* argv[]){
         printf("%s\n", filenames[i]);
     }
 
-    // int n=3;
-    // char * filenames[3] = {"../images/Albertshare.bmp", "../images/Carlitosshare.bmp", "../images/Johnshare.bmp"};
-
-
-
+    
     printf("Reading %d images...\n", n);
     BMPImage ** participants = malloc(sizeof(BMPImage*)* (n));
     int width, height;
@@ -134,23 +130,9 @@ int main(int argc, char* argv[]){
         reconstructImage(image, participants, k);
         printf("Image reconstructed\n");
     } else {
-
         printf("Error: operacion invalida. Debería ser: \'d\' para esconder la file o \'r\' para recuperarla\n");
         return 1;
         // print error and do nothing
     }
-
-    //printf("HIDDEN\n----------------\n");
-    //printImageData(hiddenImage);
-
-    // Shadow * shadows = generateShadowsFromFile(hiddenImage, k, n);
-
-    // for(int i = 0; i < n; i++){
-    //     hideShadowInImage(participants[i], shadows[i], k);
-    // }
-    
-    //printf("\n-------------------\nRECONSTRUCTED\n----------------\n");
-    // BMPImage * reconstructedImage = reconstructImage(participants, k);
-    //printImageData(reconstructedImage);
     return 0;
 }

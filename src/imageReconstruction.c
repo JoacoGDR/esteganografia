@@ -1,9 +1,11 @@
-#include "./imageReconstruction.h"
-#include "./shadowGeneration.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Gauss.h"
+#include "./Gauss.h"
+#include "./imageReconstruction.h"
+#include "./shadowGeneration.h"
+#include "./modularOperations.h"
+
 
 int extractLSB4(unsigned char * img){
     unsigned char mask = 0x0F;  // Mask to extract the 4 least significant bits
@@ -29,7 +31,6 @@ int extractLSB2(unsigned char * img){
 
     return (bitsA << 6) | (bitsB << 4) | (bitsC << 2) | bitsD;
 }
-
 
 Shadow extractShadowFromImage(BMPImage * img,  int k){
     unsigned char * image = img->data;
@@ -70,29 +71,14 @@ void printBlock(ImageBlock block, int k){
 }
 
 int validateCheating(int * f, int * g){
-    // int a0 = imageBlocks[i].f[0] == 0 ? 1: imageBlocks[i].f[0];
-    // int a1 = imageBlocks[i].f[1] == 0 ? 1: imageBlocks[i].f[1];
-
-    // int r = rand() %251;
-
-    // imageBlocks[i].g[0] = (-r * a0) % 251;  //(-r * a0)%251 = b0  => r = -b0/a0
-    // imageBlocks[i].g[0] = imageBlocks[i].g[0] < 0? imageBlocks[i].g[0] + 251: imageBlocks[i].g[0];
-
-    // imageBlocks[i].g[1] = (-r * a1) % 251; //-r * a1 = b1 => r = -b1/a1 ==> -b1/a1 == -b0/a0 => b1/b0 == a1/a0
-    // imageBlocks[i].g[1] = imageBlocks[i].g[1] < 0? imageBlocks[i].g[1] + 251: imageBlocks[i].g[1];
     
-    int a0 = f[0] == 0 ? 1:f[0];
-    int a1 = f[1] == 0 ? 1:f[1];
-    // int a1 = f[1];
-    // int a0 = f[0];
+    int a0 = f[0] == 0 ? 1 : f[0];
+    int a1 = f[1] == 0 ? 1 : f[1];
 
-    for(int r = 1; r < 251; r++){
-
-
-        if((r * a0 + g[0])%251 == 0 && (r * a1 + g[1])%251 == 0){
+    for(int r = 0; r < 251; r++){
+        if(module(module(-r) * a0) == g[0] && module(module(-r) * a1) == g[1]){
             return 1;
         }
-
     }
     return 0;
 }

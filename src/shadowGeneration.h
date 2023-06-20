@@ -1,7 +1,7 @@
 #ifndef SHADOW_GENERATION_H
 #define SHADOW_GENERATION_H
 
-#include "shadowStructures.h"
+#include "./shadowStructures.h"
 
 unsigned char ** divideBytes(unsigned char* data, int datalength,  int blockSize);
 
