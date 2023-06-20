@@ -23,7 +23,7 @@ char ** getFiles(const char * folderPath, int * n){
 
     dir = opendir(folderPath);
     if (dir == NULL) {
-        perror("Unable to open directory");
+        printf("Unable to open directory.\n");
         *n = 0;
         exit(EXIT_FAILURE);
     }
@@ -42,7 +42,7 @@ char ** getFiles(const char * folderPath, int * n){
             const char *extension = strrchr(entry->d_name, '.');
             if (extension == NULL || strcmp(extension, ".bmp") != 0) {
                 // return error
-                perror("The file isn't in .bmp format");
+                printf("The file isn't in .bmp format.\n");
                 exit(EXIT_FAILURE);
             }
             (*n)++;
@@ -65,7 +65,7 @@ BMPImage ** getParticipants(char ** filenames, int n){
     for(int i = 0; i < n; i++){
         participants[i] = readBMP(filenames[i]);
         if(i > 0 && (width != participants[i]->width || height != participants[i]->height)){
-            perror("All images must have the same width and height\n");
+            printf("All images must have the same width and height\n");
             exit(EXIT_FAILURE);
         }
         if(participants[i]->bitsPerPixel != 8){
@@ -77,7 +77,7 @@ BMPImage ** getParticipants(char ** filenames, int n){
         height = participants[i]->height;
 
         if (participants[i] == NULL) {
-            perror("Failed to read the BMP image.\n");
+            printf("Failed to read the BMP image.\n");
             exit(EXIT_FAILURE);
         }
     }
@@ -87,7 +87,7 @@ BMPImage ** getParticipants(char ** filenames, int n){
 int main(int argc, char* argv[]){
     srand(time(NULL));   // Initialization, should only be called once.
     if(argc != 5){
-        perror("Wrong number of arguments. Example: \n./ss [d] [path secret image] [k] [path images directory]\n./ss [d] [path to save restored image] [k] [path images directory]\n");
+        printf("Wrong number of arguments. Example: \n./ss [d] [path secret image] [k] [path images directory]\n./ss [d] [path to save restored image] [k] [path images directory]\n");
         return 1;
     }
     char operation = argv[1][0];
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]){
     int n;
 
     if(k < 3 || k > 8){
-        perror("k must be between 3 and 8\n");
+        printf("k must be between 3 and 8\n");
         exit(EXIT_FAILURE);
     }
 
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]){
 
         char ** filenames = getFiles(imagesDirectory, &n);
         if(n < k){
-            perror("There must be at least k images in the directory\n");
+            printf("There must be at least k images in the directory\n");
             exit(EXIT_FAILURE);
         }
         BMPImage ** participants = getParticipants(filenames, n);
@@ -114,17 +114,17 @@ int main(int argc, char* argv[]){
         const char * imageToHide = image;
         BMPImage* hiddenImage = readBMP(imageToHide);
         if (hiddenImage == NULL) {
-            perror("Failed to read the BMP image.\n");
+            printf("Failed to read the BMP image.\n");
             exit(EXIT_FAILURE);
         }
 
         if(hiddenImage->bitsPerPixel != 8){
-            perror("Image must have 8 bits per pixel\n");
+            printf("Image must have 8 bits per pixel\n");
             exit(EXIT_FAILURE);
         }
         
         if(hiddenImage->width != participants[0]->width || hiddenImage->height != participants[0]->height){
-            perror("All images must have the same width and height\n");
+            printf("All images must have the same width and height\n");
             exit(EXIT_FAILURE);
         }
 
@@ -138,14 +138,14 @@ int main(int argc, char* argv[]){
 
         char ** filenames = getFiles(imagesDirectory, &n);
         if(n < k){
-            perror("There must be at least k images in the directory\n");
+            printf("There must be at least k images in the directory\n");
             exit(EXIT_FAILURE);
         }
         BMPImage ** participants = getParticipants(filenames, k);
 
         reconstructImage(image, participants, k);
     } else {
-        perror("Invalid operation: must be \'d\' to distribute the secret or \'r\' to recover it\n");
+        printf("Invalid operation: must be \'d\' to distribute the secret or \'r\' to recover it\n");
         exit(EXIT_FAILURE);
     }
     exit(EXIT_SUCCESS);

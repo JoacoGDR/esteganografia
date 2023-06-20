@@ -103,7 +103,7 @@ ImageBlock * reconstructBlocks(Shadow * shadows, int k){
         polynomialCoefficients(gpoints,blocks[i].g,k-1);
 
         if(validateCheating(blocks[i].f,blocks[i].g) == 0){
-            perror("Wrong value of r - You're cheating!");
+            printf("Wrong value of r - You're cheating!\n");
             exit(EXIT_FAILURE);
         }
     
