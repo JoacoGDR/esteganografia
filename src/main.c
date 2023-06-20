@@ -148,5 +148,5 @@ int main(int argc, char* argv[]){
         perror("Invalid operation: must be \'d\' to distribute the secret or \'r\' to recover it\n");
         exit(EXIT_FAILURE);
     }
-    return 0;
+    exit(EXIT_SUCCESS);
 }
