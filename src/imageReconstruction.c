@@ -81,12 +81,12 @@ int validateCheating(int * f, int * g){
     // imageBlocks[i].g[1] = (-r * a1) % 251; //-r * a1 = b1 => r = -b1/a1 ==> -b1/a1 == -b0/a0 => b1/b0 == a1/a0
     // imageBlocks[i].g[1] = imageBlocks[i].g[1] < 0? imageBlocks[i].g[1] + 251: imageBlocks[i].g[1];
     
-    // int a0 = f[0] == 0 ? 1:f[0];
-    // int a1 = f[1] == 0 ? 1:f[1];
-    int a1 = f[1];
-    int a0 = f[0];
+    int a0 = f[0] == 0 ? 1:f[0];
+    int a1 = f[1] == 0 ? 1:f[1];
+    // int a1 = f[1];
+    // int a0 = f[0];
 
-    for(int r = 0; r < 251; r++){
+    for(int r = 1; r < 251; r++){
 
 
         if((r * a0 + g[0])%251 == 0 && (r * a1 + g[1])%251 == 0){
@@ -119,7 +119,7 @@ ImageBlock * reconstructBlocks(Shadow * shadows, int k){
         if(validateCheating(blocks[i].f,blocks[i].g) == 0){
             printBlock(blocks[i],k);
             perror("Wrong value of r - You're cheating!");
-            // exit(EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
     
         free(fpoints);
