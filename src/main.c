@@ -33,7 +33,11 @@ char ** getFiles(const char * folderPath, int * n){
     *n = 0;
 
     while ((entry = readdir(dir)) != NULL) {
-        if (entry->d_type == DT_REG) {  // Check if the entry is a regular file
+        int len = strlen(folderPath) + strlen(entry->d_name) + 1;
+        char *path= malloc(len);
+        snprintf(path, len, "%s%s", folderPath, entry->d_name);
+        struct stat fileStat;
+        if (lstat(path, &fileStat) == 0 && S_ISREG(fileStat.st_mode)) {  // Check if the entry is a regular file
             // Increase the file count and reallocate memory for the updated file list
             const char *extension = strrchr(entry->d_name, '.');
             if (extension == NULL || strcmp(extension, ".bmp") != 0) {
@@ -48,6 +52,7 @@ char ** getFiles(const char * folderPath, int * n){
             strcpy(fileList[*n - 1], entry->d_name);
             prependString(fileList[*n - 1], folderPath);
         }
+        free(path);
     }
 
     closedir(dir);
