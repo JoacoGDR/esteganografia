@@ -6,6 +6,9 @@
 #include <time.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/stat.h>
+
+
 
 void prependString(char* original, const char* prepend) {
     char temp[strlen(original) + 1];  // Create a temporary string to hold the original value
@@ -30,7 +33,7 @@ char ** getFiles(const char * folderPath, int * n){
     *n = 0;
 
     while ((entry = readdir(dir)) != NULL) {
-        if (entry->d_type == DT_REG) {  // Check if the entry is a regular file
+        if ((S_ISREG(entry->d_type))) {  // Check if the entry is a regular file
             // Increase the file count and reallocate memory for the updated file list
             const char *extension = strrchr(entry->d_name, '.');
             if (extension == NULL || strcmp(extension, ".bmp") != 0) {

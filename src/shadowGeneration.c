@@ -73,15 +73,15 @@ ImageBlock * decomposeImage(BMPImage * image, int k){
             }
         }
 
-        int a0 = imageBlocks[i].f[0];// == 0 ? 1: imageBlocks[i].f[0];
-        int a1 = imageBlocks[i].f[1];// == 0 ? 1: imageBlocks[i].f[1];
+        int a0 = imageBlocks[i].f[0] == 0 ? 1: imageBlocks[i].f[0];
+        int a1 = imageBlocks[i].f[1] == 0 ? 1: imageBlocks[i].f[1];
 
-        int r = rand() % 251;
+        int r = rand() % 250 + 1;
          //b0 + a0*r = 0 => -a0*r = b0 
-        imageBlocks[i].g[0] = (-r * a0) % 251;  //-r * a0 = b0  => r = -b0/a0
+        imageBlocks[i].g[0] = (-r * a0) % 250 + 1;  //-r * a0 = b0  => r = -b0/a0
         imageBlocks[i].g[0] = imageBlocks[i].g[0] < 0? imageBlocks[i].g[0] + 251: imageBlocks[i].g[0];
 
-        imageBlocks[i].g[1] = (-r * a1) % 251; //-r * a1 = b1 => r = -b1/a1 ==> a0*a1 = b0*b1
+        imageBlocks[i].g[1] = (-r * a1) % 250 + 1; //-r * a1 = b1 => r = -b1/a1 ==> a0*a1 = b0*b1
         imageBlocks[i].g[1] = imageBlocks[i].g[1] < 0? imageBlocks[i].g[1] + 251: imageBlocks[i].g[1];
     } 
     return imageBlocks;
