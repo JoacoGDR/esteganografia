@@ -5,7 +5,6 @@
 #include "./shadowGeneration.h"
 #include "./modularOperations.h"
 
-//"123141562"
 unsigned char ** divideBytes(unsigned char* data, int datalength,  int blockSize){
     int blocks = datalength/blockSize;
     unsigned char ** bytes = malloc(blocks* sizeof(unsigned char*));
@@ -83,21 +82,6 @@ ImageBlock * decomposeImage(BMPImage * image, int k){
         imageBlocks[i].g[1] = module(module(-r) * a1); //-r * a1 = b1 => r = -b1/a1 ==> a0*a1 = b0*b1
     } 
     return imageBlocks;
-}
-
-void printBlock2(ImageBlock block, int k){
-    printf("BLOCK %d: \n", block.blockNumber);
-    for(int i = 0; i < k; i++){
-        printf("%d ", block.f[i]);
-
-    }
-    for(int i = 0; i < k; i++){
-       // if(i>1){
-            printf("%d ", block.g[i]);
-      //  }
-    }
-    
-    printf("\n");
 }
 
 Shadow * generateShadowsFromFile(BMPImage * image, int k, int n){
