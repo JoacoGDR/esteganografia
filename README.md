@@ -26,7 +26,7 @@ Se pueden realizar dos acciones:
 
 1. Esconder una imagen en otras n, logrando un esquema de secreto compartido (k, n). Desde el directorio bin:
 ```
-./main d path/imagen.bmp k path_sombras
+./ss d path/imagen.bmp k path_sombras
 ```
 Donde:    
 * d: especifica que se va a distribuir la imagen
@@ -36,7 +36,7 @@ Donde:
 
 2. Recuperar el secreto a partir de n sombras. Desde el directorio bin:
 ```
-./main r path/imagen.bmp k path_sombras
+./ss r path/imagen.bmp k path_sombras
 ```
 Donde:
 * r: especifica que se va a recuperar la imagen

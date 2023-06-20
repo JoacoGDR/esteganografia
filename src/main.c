@@ -25,7 +25,7 @@ char ** getFiles(const char * folderPath, int * n){
     if (dir == NULL) {
         perror("Unable to open directory");
         *n = 0;
-        return NULL;
+        exit(EXIT_FAILURE);
     }
 
     // Dynamically allocate memory for the file list
@@ -42,9 +42,8 @@ char ** getFiles(const char * folderPath, int * n){
             const char *extension = strrchr(entry->d_name, '.');
             if (extension == NULL || strcmp(extension, ".bmp") != 0) {
                 // return error
-                printf("The file %s isn't in .bmp format", entry->d_name);
+                perror("The file isn't in .bmp format");
                 exit(EXIT_FAILURE);
-
             }
             (*n)++;
             fileList = realloc(fileList, (*n) * sizeof(char*));
@@ -60,84 +59,94 @@ char ** getFiles(const char * folderPath, int * n){
     return fileList;
 }
 
-//main.o operacion imagen.bmp k carpeta_de_imagenes
-int main(int argc, char* argv[]){
-    srand(time(NULL));   // Initialization, should only be called once.
-    if(argc != 5){
-        printf("Error: numero de argumentos invalido\n");
-        return 1;
-    }
-    char operation = argv[1][0];
-    char* image = argv[2];
-    int k = atoi(argv[3]);
-    char* imagesDirectory = argv[4];
-    printf("k: %d\n", k);
-
-    int n;
-
-    printf("Getting files...\n");
-    char ** filenames = getFiles(imagesDirectory, &n);
-    for(int i = 0; i < n; i++){
-        printf("%s\n", filenames[i]);
-    }
-
-    
-    printf("Reading %d images...\n", n);
+BMPImage ** getParticipants(char ** filenames, int n){
     BMPImage ** participants = malloc(sizeof(BMPImage*)* (n));
     int width, height;
     for(int i = 0; i < n; i++){
         participants[i] = readBMP(filenames[i]);
         if(i > 0 && (width != participants[i]->width || height != participants[i]->height)){
-            printf("Error: las imagenes deben tener el mismo tamaño\n");
-            return 1;
+            perror("All images must have the same width and height\n");
+            exit(EXIT_FAILURE);
         }
         if(participants[i]->bitsPerPixel != 8){
-            printf("Error: las imagenes deben tener 8 bits por pixel\n");
-            return 1;
+            printf("Image must have 8 bits per pixel\n");
+            exit(EXIT_FAILURE);
         }
 
         width = participants[i]->width;
         height = participants[i]->height;
 
         if (participants[i] == NULL) {
-            
-            printf("Failed to read the BMP image.\n");
-            return 1;
+            perror("Failed to read the BMP image.\n");
+            exit(EXIT_FAILURE);
         }
     }
+    return participants;
+}
 
+int main(int argc, char* argv[]){
+    srand(time(NULL));   // Initialization, should only be called once.
+    if(argc != 5){
+        perror("Wrong number of arguments. Example: \n./ss [d] [path secret image] [k] [path images directory]\n./ss [d] [path to save restored image] [k] [path images directory]\n");
+        return 1;
+    }
+    char operation = argv[1][0];
+    char * image = argv[2];
+    int k = atoi(argv[3]);
+    char* imagesDirectory = argv[4];
+    int n;
 
+    if(k < 3 || k > 8){
+        perror("k must be between 3 and 8\n");
+        exit(EXIT_FAILURE);
+    }
 
     if(operation == 'd'){
         // Read the BMP image
-        printf("Reading image to hide...\n");
+
+        char ** filenames = getFiles(imagesDirectory, &n);
+        if(n < k){
+            perror("There must be at least k images in the directory\n");
+            exit(EXIT_FAILURE);
+        }
+        BMPImage ** participants = getParticipants(filenames, n);
+
         const char * imageToHide = image;
         BMPImage* hiddenImage = readBMP(imageToHide);
         if (hiddenImage == NULL) {
-            printf("Failed to read the BMP image.\n");
-            return 1;
+            perror("Failed to read the BMP image.\n");
+            exit(EXIT_FAILURE);
         }
 
-        printf("Generating shadows...\n");
+        if(hiddenImage->bitsPerPixel != 8){
+            perror("Image must have 8 bits per pixel\n");
+            exit(EXIT_FAILURE);
+        }
+        
+        if(hiddenImage->width != participants[0]->width || hiddenImage->height != participants[0]->height){
+            perror("All images must have the same width and height\n");
+            exit(EXIT_FAILURE);
+        }
 
         Shadow * shadows = generateShadowsFromFile(hiddenImage, k, n);
 
-        printf("Hiding shadows...\n");
         for(int i = 0; i < n; i++){
             hideShadowInImage(participants[i], shadows[i], k);
         }
-        printf("Image hidden\n");
 
     } else if(operation == 'r'){
-        printf("Reconstructing image...\n");
 
-        //BMPImage * reconstructedImage = reconstructImage(image, participants, k);
+        char ** filenames = getFiles(imagesDirectory, &n);
+        if(n < k){
+            perror("There must be at least k images in the directory\n");
+            exit(EXIT_FAILURE);
+        }
+        BMPImage ** participants = getParticipants(filenames, k);
+
         reconstructImage(image, participants, k);
-        printf("Image reconstructed\n");
     } else {
-        printf("Error: operacion invalida. Debería ser: \'d\' para esconder la file o \'r\' para recuperarla\n");
-        return 1;
-        // print error and do nothing
+        perror("Invalid operation: must be \'d\' to distribute the secret or \'r\' to recover it\n");
+        exit(EXIT_FAILURE);
     }
     return 0;
 }

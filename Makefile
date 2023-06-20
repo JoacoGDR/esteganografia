@@ -6,13 +6,13 @@ SRCDIR = src
 BINDIR = bin
 
 SOURCES = $(wildcard $(SRCDIR)/*.c)
-BIN = $(BINDIR)/main
+BIN = $(BINDIR)/ss
 
 .PHONY: all clean
  
 all: $(BIN)
 
-$(BINDIR)/main: $(SOURCES)
+$(BINDIR)/ss: $(SOURCES)
 	@mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
