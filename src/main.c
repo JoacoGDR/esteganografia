@@ -23,7 +23,7 @@ char ** getFiles(const char * folderPath, int * n){
 
     dir = opendir(folderPath);
     if (dir == NULL) {
-        printf("Unable to open directory.\n");
+        printf("Unable to open directory: %s\n", folderPath);
         *n = 0;
         exit(EXIT_FAILURE);
     }
@@ -42,7 +42,7 @@ char ** getFiles(const char * folderPath, int * n){
             const char *extension = strrchr(entry->d_name, '.');
             if (extension == NULL || strcmp(extension, ".bmp") != 0) {
                 // return error
-                printf("The file isn't in .bmp format.\n");
+                printf("The file %s is not in .bmp format.\n", entry->d_name);
                 exit(EXIT_FAILURE);
             }
             (*n)++;

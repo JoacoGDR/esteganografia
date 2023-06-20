@@ -31,7 +31,7 @@ int modInverse(int n) {
     }
 
     if (r > 1) {
-        printf("Error: Inverse does not exist\n");
+        // printf("Error: Inverse does not exist\n");
         return -1;
     }
 
@@ -74,7 +74,7 @@ void polynomialCoefficients(Point* points, int* coefficients, int degree) {
         }
 
         if (pivotIndex == -1) {
-            printf("Error: Singular matrix\n");
+            // printf("Error: Singular matrix\n");
             return;
         }
 

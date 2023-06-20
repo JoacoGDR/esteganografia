@@ -80,7 +80,6 @@ ImageBlock * decomposeImage(BMPImage * image, int k){
         int r = rand() % 250 + 1;
          //b0 + a0*r = 0 => -a0*r = b0 
         imageBlocks[i].g[0] = module(module(-r) * a0);  //-r * a0 = b0  => r = -b0/a0
-
         imageBlocks[i].g[1] = module(module(-r) * a1); //-r * a1 = b1 => r = -b1/a1 ==> a0*a1 = b0*b1
     } 
     return imageBlocks;

@@ -32,7 +32,7 @@ void createBMPFile(BMPImage *image) {
   // Open the file.
   FILE* file = fopen(image->filename,"wb");
   if (file == NULL) {
-    printf("Could not open file.\n");
+    printf("Could not open file: %s\n", image->filename);
     exit(EXIT_FAILURE);
   }
   
@@ -73,7 +73,7 @@ BMPImage *readBMP(const char* filename) {
   // Open the file.
   FILE* file = fopen(filename,"rb");
   if (file == NULL) {
-    printf("Could not open file.\n");
+    printf("Could not open file: %s\n", filename);
     exit(EXIT_FAILURE);
   }
   
@@ -82,7 +82,7 @@ BMPImage *readBMP(const char* filename) {
   fread(&fileHeader, sizeof(fileHeader), 1, file);
   if (fileHeader.bfType != 0x4D42) {
     // Not a valid BMP file.
-    printf("Not a valid BMP file.\n");
+    printf("%s is not a valid BMP file\n", filename);
     fclose(file);
     exit(EXIT_FAILURE);
   }
